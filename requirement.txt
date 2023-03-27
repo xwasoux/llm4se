@@ -4,6 +4,7 @@ scipy
 pandas
 plotly
 matplotlib 
+gdown
 
 ## Pytorch
 torch 
