@@ -1,0 +1,20 @@
+## General use
+numpy 
+scipy
+pandas
+plotly
+matplotlib 
+
+## Pytorch
+torch 
+torchvision 
+torchaudio
+
+## Machine Learning
+transformers
+sentencepiece
+datasets
+fugashi
+ipadic
+rouge_score
+sacrebleu
