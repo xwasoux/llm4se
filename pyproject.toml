@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "LLMforSE"
+name = "workspace"
 version = "0.1.0"
 description = ""
 authors = ["wasou <oxwasouxo@gmail.com>"]
