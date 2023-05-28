@@ -130,5 +130,7 @@ dmypy.json
 
 *.txt
 *.json
+*.jsonl
+*.gz
 *.zip
 *.lock
