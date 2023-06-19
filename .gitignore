@@ -128,9 +128,18 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Directory
+*/data/
+
+# file extension
 *.txt
 *.json
 *.jsonl
 *.gz
+*.tar
 *.zip
 *.lock
+*.csv
+*.tsv
+*.html
+*.cas
