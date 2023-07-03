@@ -5,6 +5,6 @@ python3 ../semanticCodeSim.py \
     --epochs_num 100 \
     --evaluate_step 100 \
     --datasets /workspace/SentenceCodeBERT/data/semantic_east_sim/semantic_east_sim_dataset.pickle \
-    --base_model_save_path output/codebert_east_diff
+    --base_model_save_path output/codebert-east-diff
 
 tmux kill-session -t east_metric_learning
