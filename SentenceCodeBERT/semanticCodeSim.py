@@ -46,7 +46,7 @@ def main():
                         # handlers=[LoggingHandler()])
 
     model_save_path = args.base_model_save_path + '_' + \
-                        args.model_name_or_path.replace("/", "-")+'-' + \
+                        args.model_name_or_path.replace("/", "-")+'_' + \
                         datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     if args.do_train:
