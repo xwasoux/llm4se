@@ -129,7 +129,8 @@ dmypy.json
 .pyre/
 
 # Directory
-*/data/
+data/
+output/
 
 # file extension
 *.txt
@@ -138,6 +139,7 @@ dmypy.json
 *.gz
 *.tar
 *.zip
+*.pickle
 *.lock
 *.csv
 *.tsv
