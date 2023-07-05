@@ -90,21 +90,17 @@ def main():
         logging.info("Finished to training model!")
 
     # if args.do_evaluate:
-        ##############################################################################
-        # Load the stored model and evaluate its performance on STS benchmark dataset
-        ##############################################################################
+    #     test_samples = []
+    #     with gzip.open(sts_dataset_path, 'rt', encoding='utf8') as fIn:
+    #         reader = csv.DictReader(fIn, delimiter='\t', quoting=csv.QUOTE_NONE)
+    #         for row in reader:
+    #             if row['split'] == 'test':
+    #                 score = float(row['score']) / 5.0 #Normalize score to range 0 ... 1
+    #                 test_samples.append(InputExample(texts=[row['sentence1'], row['sentence2']], label=score))
 
-        # test_samples = []
-        # with gzip.open(sts_dataset_path, 'rt', encoding='utf8') as fIn:
-        #     reader = csv.DictReader(fIn, delimiter='\t', quoting=csv.QUOTE_NONE)
-        #     for row in reader:
-        #         if row['split'] == 'test':
-        #             score = float(row['score']) / 5.0 #Normalize score to range 0 ... 1
-        #             test_samples.append(InputExample(texts=[row['sentence1'], row['sentence2']], label=score))
-
-        # model = SentenceTransformer(model_save_path)
-        # test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, batch_size=train_batch_size, name='sts-test')
-        # test_evaluator(model, output_path=model_save_path)
+    #     model_tuned = SentenceTransformer(model_save_path)
+    #     test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, batch_size=model_tuned, name='sts-test')
+    #     test_evaluator(model_tuned, output_path=model_save_path)
 
 
 if __name__ == '__main__':
