@@ -32,19 +32,19 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
-def getDirPaths(pathName:str) -> list:
-    condition = f'{pathName}/*/'
+def get_dir_paths(path_name:str) -> list:
+    condition = f'{path_name}/*/'
     return glob.glob(condition, recursive=True)
 
-def getJonslPaths(pathName:str) -> list:
-    condition = f'{pathName}/*.jsonl'
+def get_jonsl_paths(path_name:str) -> list:
+    condition = f'{path_name}/*.jsonl'
     return glob.glob(condition, recursive=True)
 
-def logestCharCond(jsonlPaths:list, upperSize:int) -> str:
+def logest_char_cond(jsonl_paths:list, upper_size:int) -> str:
     ranking = {}
     tokenizer = AutoTokenizer.from_pretrained("microsoft/codebert-base")
 
-    for path in jsonlPaths:
+    for path in jsonl_paths:
         with open(path) as f:
             try:
                 line = json.loads(f.readline())
@@ -52,11 +52,11 @@ def logestCharCond(jsonlPaths:list, upperSize:int) -> str:
                 continue
             
         original_code = line["originalCode"]
-        sourceSizeChar = len(original_code)
-        if sourceSizeChar <= upperSize:
-            tokenLen = len(tokenizer.tokenize(original_code))
-            if tokenLen <= 510:
-                ranking[path] = tokenLen
+        source_size_char = len(original_code)
+        if source_size_char <= upper_size:
+            token_len = len(tokenizer.tokenize(original_code))
+            if token_len <= 510:
+                ranking[path] = token_len
     
     return max(ranking, key=ranking.get)
 
@@ -81,14 +81,14 @@ def main():
     test_data_paths = []
     for delete_type in args.test_data:
         test_jsonl_path = os.path.join(args.test_base_dir, delete_type)
-        each_test_data = getJonslPaths(test_jsonl_path)
+        each_test_data = get_jonsl_paths(test_jsonl_path)
         test_data_paths.extend(each_test_data)
 
-    longestCharPaths = logestCharCond(jsonlPaths=test_data_paths, upperSize=800)
-    logging.info(longestCharPaths)
+    longest_char_paths = logest_char_cond(jsonl_paths=test_data_paths, upper_size=800)
+    logging.info(longest_char_paths)
     
 
-    with open(longestCharPaths) as f:
+    with open(longest_char_paths) as f:
         jsonline = [json.loads(l) for l in f.readlines()]
 
     ## Embedding & calculate cosine simillarity
@@ -102,12 +102,12 @@ def main():
     df = pd.DataFrame(jsonline)
 
     ## Save data to jsonl & csv file
-    basename = longestCharPaths.split("/")[-1].split(".")[0]
-    storeCsvPath = os.path.join(args.model_path, args.output_dir)
-    os.makedirs(storeCsvPath)
-    storeCsv = os.path.join(args.model_path, args.output_dir, f"{basename}.csv")
-    df.to_csv(storeCsv, index=False)
-    logging.info(f"Saved! -> {storeCsv}.csv")
+    basename = longest_char_paths.split("/")[-1].split(".")[0]
+    store_csv_path = os.path.join(args.model_path, args.output_dir)
+    os.makedirs(store_csv_path)
+    store_csv = os.path.join(args.model_path, args.output_dir, f"{basename}.csv")
+    df.to_csv(store_csv, index=False)
+    logging.info(f"Saved! -> {store_csv}.csv")
 
 
 if __name__ == '__main__':

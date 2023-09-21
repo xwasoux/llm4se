@@ -16,16 +16,16 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     level=logging.INFO)
 
 
-def getDirPaths(pathName:str) -> list:
-    condition = f'{pathName}/*/'
+def get_dir_paths(path_name:str) -> list:
+    condition = f'{path_name}/*/'
     return glob.glob(condition)
 
-def getJsonlPaths(pathName:str) -> list:
-    condition = f'{pathName}/*.jsonl'
+def get_jsonl_paths(path_name:str) -> list:
+    condition = f'{path_name}/*.jsonl'
     return glob.glob(condition)
 
-def mkDir(pathStr:str) -> None:
-    os.makedirs(pathStr, mode=0o777, exist_ok=True)
+def mk_dir(path_str:str) -> None:
+    os.makedirs(path_str, mode=0o777, exist_ok=True)
     return None
 
 
@@ -38,47 +38,47 @@ def main():
 
     args = parser.parse_args()
 
-    langTypes = getDirPaths(args.input_dir)
+    lang_types = get_dir_paths(args.input_dir)
 
-    for langPath in langTypes:
-        lang = langPath.split("/")[-2]
+    for lang_path in lang_types:
+        lang = lang_path.split("/")[-2]
         logging.info(f"=== {lang} ===")
 
-        eachTypesPaths = getDirPaths(langPath)
+        each_types_paths = get_dir_paths(lang_path)
 
-        for purposePath in eachTypesPaths:
-            purposeType = purposePath.split("/")[-2]
-            logging.info(f"== {purposeType} ==")
+        for purpose_path in each_types_paths:
+            purpose_type = purpose_path.split("/")[-2]
+            logging.info(f"== {purpose_type} ==")
 
-            logging.info(purposePath)
+            logging.info(purpose_path)
             
-            deletionTypePaths = getDirPaths(purposePath)
-            logging.info(deletionTypePaths)
+            deletion_type_paths = get_dir_paths(purpose_path)
+            logging.info(deletion_type_paths)
 
-            for deleteTypePath in deletionTypePaths:
-                deleteType = deleteTypePath.split("/")[-2]
+            for delete_type_path in deletion_type_paths:
+                delete_type = delete_type_path.split("/")[-2]
 
-                allDataPath = getJsonlPaths(deleteTypePath)
+                all_data_path = get_jsonl_paths(delete_type_path)
 
-                allInputExamples = []
+                all_input_examples = []
 
-                for dataPath in tqdm(allDataPath):
-                    with open(dataPath) as f:
-                        jsonlData = [json.loads(l) for l in f.readlines()]
+                for data_path in tqdm(all_data_path):
+                    with open(data_path) as f:
+                        jsonl_data = [json.loads(l) for l in f.readlines()]
 
-                    for line in jsonlData:
-                        allInputExamples.append(InputExample(guid=f"index", 
+                    for line in jsonl_data:
+                        all_input_examples.append(InputExample(guid=f"index", 
                                                             texts=[line["originalCode"], line["editedCode"]], 
                                                             label=line["cosSimChar"]))
 
-                logging.info(f"InputExample Data : {len(allInputExamples)}")
+                logging.info(f"InputExample Data : {len(all_input_examples)}")
 
-                storeDir = os.path.join(args.output_dir, lang, purposeType)
-                os.makedirs(storeDir, mode=0o777, exist_ok=True)
-                storeFileName = os.path.join(storeDir, f"{deleteType}.pickle")
-                with open(storeFileName, "wb") as p:
-                    pickle.dump(allInputExamples, p)
-                logging.info(f"Stored pickle data -> {storeFileName}")
+                store_dir = os.path.join(args.output_dir, lang, purpose_type)
+                os.makedirs(store_dir, mode=0o777, exist_ok=True)
+                store_file_name = os.path.join(store_dir, f"{delete_type}.pickle")
+                with open(store_file_name, "wb") as p:
+                    pickle.dump(all_input_examples, p)
+                logging.info(f"Stored pickle data -> {store_file_name}")
 
 
     return None
