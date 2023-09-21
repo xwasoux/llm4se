@@ -22,6 +22,16 @@ from sentence_transformers import models, losses
 from sentence_transformers import LoggingHandler, SentenceTransformer, util, InputExample
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
 
+def create_pooler_name(args:argparse) -> str:
+    name = "_"
+    if args.pooling_mode_cls:
+        name += "cls" + "_"
+    if args.pooling_mode_max:
+        name += "max" + "_"
+    if args.pooling_mode_mean:
+        name += "mean" + "_"
+    return name
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -32,6 +42,10 @@ def main():
     parser.add_argument('--do_train', action="store_true")
     parser.add_argument('--do_evaluate', action="store_true")
 
+    parser.add_argument('--pooling_mode_cls', action="store_true")
+    parser.add_argument('--pooling_mode_max', action="store_true")
+    parser.add_argument('--pooling_mode_mean', action="store_true")
+    
     parser.add_argument('--train_batch_size', type=int, default=32)
     parser.add_argument('--epochs_num', type=int, default=100)
     parser.add_argument('--evaluate_step', type=int, default=100)
@@ -47,8 +61,11 @@ def main():
                         level=logging.INFO)
                         # handlers=[LoggingHandler()])
 
+    pooler_name = create_pooler_name(args=args)
+    
     model_save_path = args.base_model_save_path + '_' + \
                         args.model_name_or_path.replace("/", "-")+'_' + \
+                        pooler_name + \
                         datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     if args.do_train:
@@ -56,9 +73,9 @@ def main():
         ## model settings
         word_embedding_model = models.Transformer(args.model_name_or_path)
         pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension(),
-                                        pooling_mode_mean_tokens=False,
-                                        pooling_mode_cls_token=True,
-                                        pooling_mode_max_tokens=False)
+                                        pooling_mode_mean_tokens=args.pooling_mode_mean,
+                                        pooling_mode_cls_token=args.pooling_mode_cls,
+                                        pooling_mode_max_tokens=args.pooling_mode_max)
         model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
         logging.info("Load Training Dataset from Pickle...")
