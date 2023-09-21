@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import csv
 import json
@@ -51,7 +52,7 @@ def logest_char_cond(jsonl_paths:list, upper_size:int) -> str:
             except:
                 continue
             
-        original_code = line["originalCode"]
+        original_code = line["cleaned_code"]
         source_size_char = len(original_code)
         if source_size_char <= upper_size:
             token_len = len(tokenizer.tokenize(original_code))
@@ -64,19 +65,15 @@ def logest_char_cond(jsonl_paths:list, upper_size:int) -> str:
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--model_path', type=str)
+    parser.add_argument('--model_path', nargs='*')
 
     parser.add_argument('--test_base_dir', type=str)
     parser.add_argument('--lang', type=str)
     parser.add_argument('--test_data', nargs='*')
     
-    parser.add_argument('--output_dir', type=str)
+    parser.add_argument('--output_path', type=str)
 
     args = parser.parse_args()
-
-    ## Load fine-tuned model
-    model_tuned = SentenceTransformer(args.model_path)
-
 
     test_data_paths = []
     for pruning_type in args.test_data:
@@ -86,28 +83,40 @@ def main():
 
     longest_char_paths = logest_char_cond(jsonl_paths=test_data_paths, upper_size=800)
     logging.info(longest_char_paths)
-    
 
     with open(longest_char_paths) as f:
         jsonline = [json.loads(l) for l in f.readlines()]
 
     ## Embedding & calculate cosine simillarity
-    for line in jsonline:
-        source_embedding = model_tuned.encode(line["originalCode"], convert_to_tensor=True)
-        target_embedding = model_tuned.encode(line["editedCode"], convert_to_tensor=True)
+    pooler_types = []
+    for model_name in args.model_path:
+        ## Load fine-tuned model
+        model_tuned = SentenceTransformer(model_name)
+        
+        res = re.search(r'(cls|max|mean)', model_name)
+        pooler_name = res.group()
+        pooler_types.append(pooler_name)
+        for line in jsonline:
+            source_embedding = model_tuned.encode(line["cleaned_code"], convert_to_tensor=True)
+            target_embedding = model_tuned.encode(line["edited_code"], convert_to_tensor=True)
 
-        cosine_score = util.cos_sim(source_embedding, target_embedding)
-        line["cosSimInspect"] = cosine_score[0][0].item()
+            cosine_score = util.cos_sim(source_embedding, target_embedding)
+            line[f"inspect_{pooler_name}"] = cosine_score[0][0].item()
         
     df = pd.DataFrame(jsonline)
 
     ## Save data to jsonl & csv file
     basename = longest_char_paths.split("/")[-1].split(".")[0]
-    store_csv_path = os.path.join(args.model_path, args.output_dir)
-    os.makedirs(store_csv_path)
-    store_csv = os.path.join(args.model_path, args.output_dir, f"{basename}.csv")
+    store_csv_path = os.path.join(args.output_path, basename)
+    os.makedirs(store_csv_path, exist_ok=True)
+    
+    time_label = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    data_label = "_".join(args.test_data)
+    pooler_label = "_".join(pooler_types)
+    store_csv = os.path.join(store_csv_path, f"{time_label}_{data_label}_{pooler_label}.csv")
+    
     df.to_csv(store_csv, index=False)
-    logging.info(f"Saved! -> {store_csv}.csv")
+    logging.info(f"Saved! -> {store_csv}")
 
 
 if __name__ == '__main__':
