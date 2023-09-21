@@ -62,11 +62,11 @@ def main():
         model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
         logging.info("Load Training Dataset from Pickle...")
-        purpose_type = "train"
+        partition_type = "train"
 
         train_data = []
-        for delete_type in args.train_data:
-            train_data_path = os.path.join(args.input_base_dir, args.language, purpose_type, f"{delete_type}.pickle")
+        for pruning_type in args.train_data:
+            train_data_path = os.path.join(args.input_base_dir, args.language, partition_type, f"{pruning_type}.pickle")
 
             with open(train_data_path, "rb") as p:
                 each_train_data = pickle.load(p)

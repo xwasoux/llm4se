@@ -16,7 +16,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     level=logging.INFO)
 
 
-def get_dir_paths(path_name:str) -> list:
+def get_children_dir_paths(path_name:str) -> list:
     condition = f'{path_name}/*/'
     return glob.glob(condition)
 
@@ -38,48 +38,46 @@ def main():
 
     args = parser.parse_args()
 
-    lang_types = get_dir_paths(args.input_dir)
+    lang_types = get_children_dir_paths(args.input_dir)
 
     for lang_path in lang_types:
         lang = lang_path.split("/")[-2]
         logging.info(f"=== {lang} ===")
 
-        each_types_paths = get_dir_paths(lang_path)
+        all_partition_paths = get_children_dir_paths(lang_path)
 
-        for purpose_path in each_types_paths:
-            purpose_type = purpose_path.split("/")[-2]
-            logging.info(f"== {purpose_type} ==")
+        for partition_path in all_partition_paths:
+            partition_type = partition_path.split("/")[-2]
+            logging.info(f"== {partition_type} ==")
 
-            logging.info(purpose_path)
+            logging.info(partition_path)
             
-            deletion_type_paths = get_dir_paths(purpose_path)
-            logging.info(deletion_type_paths)
+            pruning_type_paths = get_children_dir_paths(partition_path)
+            logging.info(pruning_type_paths)
 
-            for delete_type_path in deletion_type_paths:
-                delete_type = delete_type_path.split("/")[-2]
+            for path in pruning_type_paths:
+                pruning_type = path.split("/")[-2]
 
-                all_data_path = get_jsonl_paths(delete_type_path)
+                all_jsonl_paths = get_jsonl_paths(path)
 
                 all_input_examples = []
-
-                for data_path in tqdm(all_data_path):
-                    with open(data_path) as f:
+                for jsonl_path in tqdm(all_jsonl_paths):
+                    with open(jsonl_path) as f:
                         jsonl_data = [json.loads(l) for l in f.readlines()]
 
                     for line in jsonl_data:
                         all_input_examples.append(InputExample(guid=f"index", 
-                                                            texts=[line["originalCode"], line["editedCode"]], 
-                                                            label=line["cosSimChar"]))
+                                                                texts=[line["originalCode"], line["editedCode"]], 
+                                                                label=line["cosSimChar"]))
 
                 logging.info(f"InputExample Data : {len(all_input_examples)}")
 
-                store_dir = os.path.join(args.output_dir, lang, purpose_type)
+                store_dir = os.path.join(args.output_dir, lang, partition_type)
                 os.makedirs(store_dir, mode=0o777, exist_ok=True)
-                store_file_name = os.path.join(store_dir, f"{delete_type}.pickle")
+                store_file_name = os.path.join(store_dir, f"{pruning_type}.pickle")
                 with open(store_file_name, "wb") as p:
                     pickle.dump(all_input_examples, p)
                 logging.info(f"Stored pickle data -> {store_file_name}")
-
 
     return None
 

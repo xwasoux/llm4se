@@ -32,7 +32,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
-def get_dir_paths(path_name:str) -> list:
+def get_children_dir_paths(path_name:str) -> list:
     condition = f'{path_name}/*/'
     return glob.glob(condition, recursive=True)
 
@@ -79,8 +79,8 @@ def main():
 
 
     test_data_paths = []
-    for delete_type in args.test_data:
-        test_jsonl_path = os.path.join(args.test_base_dir, delete_type)
+    for pruning_type in args.test_data:
+        test_jsonl_path = os.path.join(args.test_base_dir, pruning_type)
         each_test_data = get_jonsl_paths(test_jsonl_path)
         test_data_paths.extend(each_test_data)
 

@@ -14,7 +14,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     level=logging.INFO)
 
 
-def get_dir_paths(pathName:str) -> list:
+def get_children_dir_paths(pathName:str) -> list:
     condition = f'{pathName}/*/'
     return glob.glob(condition)
 
@@ -65,7 +65,7 @@ def main():
 
     args = parser.parse_args()
 
-    lang_types = get_dir_paths(args.input_dir)
+    lang_types = get_children_dir_paths(args.input_dir)
 
     for lang_path in lang_types:
         lang = lang_path.split("/")[-2]
