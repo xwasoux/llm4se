@@ -6,9 +6,10 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/CuttingAST/inputExample \
     --language python \
-    --train_data rule_point \
+    --train_data rule_point back_seq \
     --base_model_save_path ../output/CuttingAST-rule \
-    --pooling_mode_cls
+    --pooling_mode_cls \
+    --upper_data_size 100
 
 python3 ../run.py \
     --model_name_or_path microsoft/codebert-base \
@@ -18,9 +19,10 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/CuttingAST/inputExample \
     --language python \
-    --train_data rule_point \
+    --train_data rule_point back_seq \
     --base_model_save_path ../output/CuttingAST-rule \
-    --pooling_mode_max
+    --pooling_mode_max \
+    --upper_data_size 100
 
 python3 ../run.py \
     --model_name_or_path microsoft/codebert-base \
@@ -30,6 +32,7 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/CuttingAST/inputExample \
     --language python \
-    --train_data rule_point \
+    --train_data rule_point back_seq \
     --base_model_save_path ../output/CuttingAST-rule \
-    --pooling_mode_mean
+    --pooling_mode_mean \
+    --upper_data_size 100

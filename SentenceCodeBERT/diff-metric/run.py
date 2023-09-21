@@ -53,6 +53,7 @@ def main():
     parser.add_argument('--input_base_dir', type=str)
     parser.add_argument('--language', type=str)
     parser.add_argument('--train_data', nargs='*')
+    parser.add_argument('--upper_data_size', type=int)
 
     args = parser.parse_args()
 
@@ -80,13 +81,17 @@ def main():
 
         logging.info("Load Training Dataset from Pickle...")
         partition_type = "train"
-
+                   
         train_data = []
         for pruning_type in args.train_data:
             train_data_path = os.path.join(args.input_base_dir, args.language, partition_type, f"{pruning_type}.pickle")
 
             with open(train_data_path, "rb") as p:
                 each_train_data = pickle.load(p)
+                
+            if args.upper_data_size:
+                each_train_data = random.sample(each_train_data, args.upper_data_size)
+
             train_data.extend(each_train_data)
 
         # train_data = train_data[:int(len(train_data)*0.9)]
