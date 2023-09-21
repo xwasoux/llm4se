@@ -24,10 +24,6 @@ def get_jsonl_paths(path_name:str) -> list:
     condition = f'{path_name}/*.jsonl'
     return glob.glob(condition)
 
-def mk_dir(path_str:str) -> None:
-    os.makedirs(path_str, mode=0o777, exist_ok=True)
-    return None
-
 
 def main():
 
