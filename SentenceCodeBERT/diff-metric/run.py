@@ -52,7 +52,7 @@ def main():
 
     parser.add_argument('--input_base_dir', type=str)
     parser.add_argument('--language', type=str)
-    parser.add_argument('--train_data', nargs='*')
+    parser.add_argument('--train_datas', nargs='*')
     parser.add_argument('--upper_data_size', type=int)
 
     args = parser.parse_args()
