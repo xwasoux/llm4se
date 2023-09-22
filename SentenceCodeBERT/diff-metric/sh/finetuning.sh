@@ -6,8 +6,8 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/CuttingAST/inputExample \
     --language python \
-    --train_data rule_point back_seq \
-    --base_model_save_path ../output/CuttingAST-rule \
+    --train_datas rule_point back_seq \
+    --base_model_save_path ../output/CuttingAST \
     --pooling_mode_cls \
     --upper_data_size 100
 
@@ -19,8 +19,8 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/CuttingAST/inputExample \
     --language python \
-    --train_data rule_point back_seq \
-    --base_model_save_path ../output/CuttingAST-rule \
+    --train_datas rule_point back_seq \
+    --base_model_save_path ../output/CuttingAST \
     --pooling_mode_max \
     --upper_data_size 100
 
@@ -32,7 +32,7 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/CuttingAST/inputExample \
     --language python \
-    --train_data rule_point back_seq \
-    --base_model_save_path ../output/CuttingAST-rule \
+    --train_datas rule_point back_seq \
+    --base_model_save_path ../output/CuttingAST \
     --pooling_mode_mean \
     --upper_data_size 100

@@ -64,10 +64,11 @@ def main():
 
     pooler_name = create_pooler_name(args=args)
     
-    model_save_path = args.base_model_save_path + '_' + \
-                        args.model_name_or_path.replace("/", "-")+'_' + \
-                        pooler_name + \
-                        datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    model_save_path = os.path.join(args.base_model_save_path, 
+                                    args.model_name_or_path.replace("/", "-") + '_' + \
+                                        pooler_name + '_' + \
+                                        datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                                    )
 
     if args.do_train:
 
