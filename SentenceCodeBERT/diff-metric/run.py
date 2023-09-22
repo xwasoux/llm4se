@@ -94,8 +94,6 @@ def main():
 
             train_data.extend(each_train_data)
 
-        # train_data = train_data[:int(len(train_data)*0.9)]
-
         logging.info(f'[Train Dataset size]\n\ttrain data:\n\t\tlength - {len(train_data)}')
         # logging.info(f'[Valid Dataset size]\n\tvalid data:\n\t\tlength - {len(valid_data)}')
 
@@ -111,7 +109,6 @@ def main():
 
         # Train the model
         logging.info("Start training...")
-
         model.fit(train_objectives=[(train_dataloader, train_loss)],
                     # evaluator=valid_evaluator,
                     epochs=args.epochs_num,
