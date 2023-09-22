@@ -111,8 +111,8 @@ def main():
     os.makedirs(store_csv_path, exist_ok=True)
     
     time_label = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    data_label = "_".join(args.test_data)
-    pooler_label = "_".join(pooler_types)
+    data_label = "-".join(args.test_data)
+    pooler_label = "-".join(pooler_types)
     store_csv = os.path.join(store_csv_path, f"{time_label}_{data_label}_{pooler_label}.csv")
     
     df.to_csv(store_csv, index=False)

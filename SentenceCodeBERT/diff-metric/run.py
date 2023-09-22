@@ -23,14 +23,14 @@ from sentence_transformers import LoggingHandler, SentenceTransformer, util, Inp
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
 
 def create_pooler_name(args:argparse) -> str:
-    name = "_"
+    pooler_names = []
     if args.pooling_mode_cls:
-        name += "cls" + "_"
+        pooler_names.append("cls")
     if args.pooling_mode_max:
-        name += "max" + "_"
+        pooler_names.append("max")
     if args.pooling_mode_mean:
-        name += "mean" + "_"
-    return name
+        pooler_names.append("mean")
+    return "-".join(pooler_names)
 
 
 def main():
