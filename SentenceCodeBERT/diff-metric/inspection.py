@@ -93,16 +93,20 @@ def main():
         ## Load fine-tuned model
         model_tuned = SentenceTransformer(model_name)
         
-        res = re.search(r'(cls|max|mean)', model_name)
-        pooler_name = res.group()
+        res = re.findall(r'(cls|max|mean)', model_name)
+        pooler_name = "-".join(res)
         pooler_types.append(pooler_name)
         for line in jsonline:
-            source_embedding = model_tuned.encode(line["cleaned_code"], convert_to_tensor=True)
-            target_embedding = model_tuned.encode(line["edited_code"], convert_to_tensor=True)
+            flattened_code = re.sub(r"\n", " ", re.sub(r"\s+", " ", line["cleaned_code"]))
+            flattened_edited_code = re.sub(r"\n", " ", re.sub(r"\s+", " ", line["edited_code"]))
+            line["flattened_code"] = flattened_code
+            line["flattened_edited_code"] = flattened_edited_code
+            source_embedding = model_tuned.encode(flattened_code, convert_to_tensor=True)
+            target_embedding = model_tuned.encode(flattened_edited_code, convert_to_tensor=True)
 
             cosine_score = util.cos_sim(source_embedding, target_embedding)
             line[f"inspect_{pooler_name}"] = cosine_score[0][0].item()
-        
+
     df = pd.DataFrame(jsonline)
 
     ## Save data to jsonl & csv file
@@ -111,7 +115,8 @@ def main():
     os.makedirs(store_csv_path, exist_ok=True)
     
     time_label = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    data_label = "-".join(args.test_data)
+    replace_test_data = [re.sub("_", "-", string) for string in args.test_data]
+    data_label = "-".join(replace_test_data)
     pooler_label = "-".join(pooler_types)
     store_csv = os.path.join(store_csv_path, f"{time_label}_{data_label}_{pooler_label}.csv")
     
