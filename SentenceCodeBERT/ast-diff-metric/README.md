@@ -1,4 +1,4 @@
-# Code Metric Learning for AST-Edit Distance
+# Code Metric Learning for Edit Distance
 
 ## Data Download
 
