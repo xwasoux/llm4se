@@ -84,7 +84,7 @@ def main():
         partition_type = "train"
                    
         train_data = []
-        for pruning_type in args.train_data:
+        for pruning_type in args.train_datas:
             train_data_path = os.path.join(args.input_base_dir, args.language, partition_type, f"{pruning_type}.pickle")
 
             with open(train_data_path, "rb") as p:
