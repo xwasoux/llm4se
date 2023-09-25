@@ -1,5 +1,6 @@
 CURRENT=$(pwd)
 
+mkdir ../data
 cd ../data
 
 gdown 1pj_fzfcl77230ydB-qUQw2oxcEBUBMw8

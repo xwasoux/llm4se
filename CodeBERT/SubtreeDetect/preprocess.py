@@ -6,6 +6,7 @@ import glob
 import pickle
 import logging
 import argparse
+import utils
 import pandas as pd
 from tqdm import tqdm
 
@@ -40,9 +41,9 @@ def format_jsonl(json_line:list, node_types:list) -> list:
         simple_dict["path"] = line["path"]
         simple_dict["func_name"] = line["func_name"]
         simple_dict["lang"] = line["language"]
-
-        simple_dict["text"] = remove_comments(line["code"])
-
+        simple_dict["text"] = utils.remove_spaces_and_tabs(
+                                utils.remove_comments_and_docstrings(line["code"], "python"))
+        print(simple_dict["text"])
         unique_included_types = line["subtree_elements_unique"]
         for node in node_types:
             if node in unique_included_types:
