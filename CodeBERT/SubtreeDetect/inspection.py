@@ -41,7 +41,7 @@ def funcspeed(func):
         return res
     return _wrapper
 
-def get_dir_paths(dir_path:str) -> list:
+def get_children_dir_paths(dir_path:str) -> list:
     condition = f'{dir_path}/*/'
     return glob.glob(condition, recursive=True)
 
@@ -60,7 +60,7 @@ def load_test_data(jsonl_dir:str, partition:str) -> list:
     return jsonl_data
 
 def get_model_dir(model_dirs:str, node_type:str) -> str:
-    model_dirs = get_dir_paths(model_dirs)
+    model_dirs = get_children_dir_paths(model_dirs)
     
     for path in model_dirs:
         match_res = re.search(r'[a-z]+(_statement|_clause)', str(path))
@@ -69,7 +69,7 @@ def get_model_dir(model_dirs:str, node_type:str) -> str:
             continue
         else:
             pass
-    each_checkpoints = get_dir_paths(model_base_dir)
+    each_checkpoints = get_children_dir_paths(model_base_dir)
     checkpoint_num = {}
     for each_path in each_checkpoints:
         match_res = re.search(r'checkpoint-[0-9]+', each_path)

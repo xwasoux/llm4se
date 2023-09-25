@@ -1,6 +1,5 @@
 import os
 import json
-import re
 import sys
 import glob
 import pickle
@@ -63,11 +62,10 @@ def main():
                         jsonl_data = [json.loads(l) for l in f.readlines()]
 
                     for line in jsonl_data:
-                        flattened_code = re.sub(r"\n", " ", re.sub(r"\s+", " ", line["cleaned_code"]))
-                        flattened_edited_code = re.sub(r"\n", " ", re.sub(r"\s+", " ", line["edited_code"]))
                         all_input_examples.append(InputExample(guid=f"index", 
-                                                                texts=[flattened_code, flattened_edited_code], 
-                                                                label=line["cos_sim_diff_char"]))
+                                                                texts=[line["cleaned_code"], line["edited_code"]], 
+                                                                label=line["cos_sim_diff_node"]))
+
                 logging.info(f"InputExample Data : {len(all_input_examples)}")
 
                 store_dir = os.path.join(args.output_dir, lang, partition_type)

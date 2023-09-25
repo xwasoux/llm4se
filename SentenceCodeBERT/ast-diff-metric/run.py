@@ -22,6 +22,16 @@ from sentence_transformers import models, losses
 from sentence_transformers import LoggingHandler, SentenceTransformer, util, InputExample
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
 
+def create_pooler_name(args:argparse) -> str:
+    pooler_names = []
+    if args.pooling_mode_cls:
+        pooler_names.append("cls")
+    if args.pooling_mode_max:
+        pooler_names.append("max")
+    if args.pooling_mode_mean:
+        pooler_names.append("mean")
+    return "-".join(pooler_names)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -32,11 +42,18 @@ def main():
     parser.add_argument('--do_train', action="store_true")
     parser.add_argument('--do_evaluate', action="store_true")
 
+    parser.add_argument('--pooling_mode_cls', action="store_true")
+    parser.add_argument('--pooling_mode_max', action="store_true")
+    parser.add_argument('--pooling_mode_mean', action="store_true")
+    
     parser.add_argument('--train_batch_size', type=int, default=32)
     parser.add_argument('--epochs_num', type=int, default=100)
     parser.add_argument('--evaluate_step', type=int, default=100)
 
-    parser.add_argument('--datasets', type=str)
+    parser.add_argument('--input_base_dir', type=str)
+    parser.add_argument('--language', type=str)
+    parser.add_argument('--train_datas', nargs='*')
+    parser.add_argument('--upper_data_size', type=int)
 
     args = parser.parse_args()
 
@@ -45,42 +62,56 @@ def main():
                         level=logging.INFO)
                         # handlers=[LoggingHandler()])
 
-    model_save_path = args.base_model_save_path + '_' + \
-                        args.model_name_or_path.replace("/", "-")+'_' + \
-                        datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    pooler_name = create_pooler_name(args=args)
+    
+    model_save_path = os.path.join(args.base_model_save_path, 
+                                    args.model_name_or_path.replace("/", "-") + '_' + \
+                                        pooler_name + '_' + \
+                                        datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                                    )
 
     if args.do_train:
+
         ## model settings
         word_embedding_model = models.Transformer(args.model_name_or_path)
         pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension(),
-                                        pooling_mode_mean_tokens=False,
-                                        pooling_mode_cls_token=True,
-                                        pooling_mode_max_tokens=False)
+                                        pooling_mode_mean_tokens=args.pooling_mode_mean,
+                                        pooling_mode_cls_token=args.pooling_mode_cls,
+                                        pooling_mode_max_tokens=args.pooling_mode_max)
         model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
-        logging.info("Load Dataset from Pickle...")
-        with open(args.datasets, "rb") as p:
-            datasets = pickle.load(p)
+        logging.info("Load Training Dataset from Pickle...")
+        partition_type = "train"
+                   
+        train_data = []
+        for pruning_type in args.train_datas:
+            train_data_path = os.path.join(args.input_base_dir, args.language, partition_type, f"{pruning_type}.pickle")
 
-        train_data = datasets[:int(len(datasets)*0.85)]
-        valid_data = datasets[int(len(datasets)*0.85):]
-        logging.info(f'[Dataset size]\n\ttrain data:\n\t\tlength - {len(train_data)}\n\tvalid data:\n\t\tlength - {len(valid_data)}')
+            with open(train_data_path, "rb") as p:
+                each_train_data = pickle.load(p)
+                
+            if args.upper_data_size:
+                each_train_data = random.sample(each_train_data, args.upper_data_size)
+
+            train_data.extend(each_train_data)
+
+        logging.info(f'[Train Dataset size]\n\ttrain data:\n\t\tlength - {len(train_data)}')
+        # logging.info(f'[Valid Dataset size]\n\tvalid data:\n\t\tlength - {len(valid_data)}')
 
         train_dataloader = DataLoader(train_data, shuffle=True, batch_size=args.train_batch_size)
         train_loss = losses.CosineSimilarityLoss(model=model)
 
-        valid_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(valid_data,
-                                                                            batch_size=args.train_batch_size,
-                                                                            name='ses-valid')
+        # valid_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(valid_data,
+        #                                                                     batch_size=args.train_batch_size,
+        #                                                                     name='ses-valid')
 
         warmup_steps = math.ceil(len(train_dataloader) * args.epochs_num * 0.1)
         logging.info("Warmup-steps: {}".format(warmup_steps))
 
         # Train the model
         logging.info("Start training...")
-
         model.fit(train_objectives=[(train_dataloader, train_loss)],
-                    evaluator=valid_evaluator,
+                    # evaluator=valid_evaluator,
                     epochs=args.epochs_num,
                     evaluation_steps=args.evaluate_step,
                     warmup_steps=warmup_steps,
@@ -105,3 +136,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

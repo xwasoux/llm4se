@@ -1,8 +1,16 @@
-mkdir ../data ../data/semantic_east_sim
-cd ../data/semantic_east_sim
-gdown https://drive.google.com/uc?id=1n6OyDsNifUY0h9h8yNpWzvdkseqSly-9
-unzip semantic_east_sim_data.zip
-rm  semantic_east_sim_data.zip
-cd ../../semantic_east_sim
-python ast_diff_preprocess.py
-cd ..
+CURRENT=$(pwd)
+
+mkdir ../data ../data/CuttingAST ../data/CuttingAST/inputExample
+mkdir ../output ../output/CuttingAST 
+cd ../data/CuttingAST
+
+gdown 1Qzfh7exLYi5VrICS0syPh9h32Siab76q # 500 programs
+unzip CuttingAST.zip
+rm CuttingAST.zip
+
+cd $CURRENT
+
+lang=python
+python3 ../preprocess.py \
+    --input_dir ../data/CuttingAST/CuttingAST \
+    --output_dir ../data/CuttingAST/inputExample
