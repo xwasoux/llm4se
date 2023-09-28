@@ -100,7 +100,6 @@ def main():
 
         train_dataloader = DataLoader(train_data, shuffle=True, batch_size=args.train_batch_size)
         train_loss = losses.CosineSimilarityLoss(model=model)
-
         # valid_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(valid_data,
         #                                                                     batch_size=args.train_batch_size,
         #                                                                     name='ses-valid')
