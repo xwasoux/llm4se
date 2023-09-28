@@ -1,6 +1,12 @@
 import re
 from io import StringIO
 import  tokenize
+from glob import glob
+
+
+def get_jsonl_paths(base_dir:str) -> list:
+    condition = f'{base_dir}/*.jsonl'
+    return glob(condition, recursive=True)
 
 def remove_comments_and_docstrings(source:str, lang:str) -> str:
     if lang in ["python"]:
@@ -69,3 +75,6 @@ def remove_spaces_and_tabs(source:str) -> str:
 def flatten_code(source:str) -> str:
     source = re.sub(r"\n", " ", source)
     return source
+    
+def distance_to_cosine(distance:int) -> float:
+    return 1/(1+distance)
