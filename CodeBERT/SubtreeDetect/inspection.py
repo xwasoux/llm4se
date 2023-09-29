@@ -25,6 +25,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 from datasets import Dataset, DatasetDict, load_metric
 from transformers import pipeline
 
+from utils import get_children_dir_paths
 
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -40,14 +41,6 @@ def funcspeed(func):
         logging.info(f"<<< Total processing time : {time_diff} >>>")
         return res
     return _wrapper
-
-def get_children_dir_paths(dir_path:str) -> list:
-    condition = f'{dir_path}/*/'
-    return glob.glob(condition, recursive=True)
-
-def get_jsonl_paths(dir_path:str) -> list:
-    condition = f'{dir_path}/*.jsonl'
-    return glob.glob(condition, recursive=True)
 
 def load_test_data(jsonl_dir:str, partition:str) -> list:
     logging.info("-- Loading Test Data --")

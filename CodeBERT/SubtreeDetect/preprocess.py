@@ -2,7 +2,6 @@ import re
 import os
 import json
 import sys
-import glob
 import pickle
 import logging
 import argparse
@@ -10,15 +9,12 @@ import utils
 import pandas as pd
 from tqdm import tqdm
 
+from utils import get_children_dir_paths
 
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
-
-def get_children_dir_paths(pathName:str) -> list:
-    condition = f'{pathName}/*/'
-    return glob.glob(condition)
 
 def format_jsonl(json_line:list, node_types:list) -> list:
     extract_lines = []
@@ -32,10 +28,9 @@ def format_jsonl(json_line:list, node_types:list) -> list:
         simple_dict["path"] = line["path"]
         simple_dict["func_name"] = line["func_name"]
         simple_dict["lang"] = line["language"]
-        simple_dict["text"] = utils.remove_spaces_and_tabs(
-                                utils.remove_comments_and_docstrings(line["code"], "python"))
-        print(simple_dict["text"])
-        unique_included_types = line["subtree_elements_unique"]
+        simple_dict["text"] = line["cleaned_code"]
+        unique_included_types = line["cleaned_code_subtree_elements_unique"]
+
         for node in node_types:
             if node in unique_included_types:
                 simple_dict[node] = POSITIVE
