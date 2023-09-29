@@ -31,6 +31,9 @@ def format_jsonl(json_line:list, node_types:list) -> list:
         simple_dict["text"] = line["cleaned_code"]
         unique_included_types = line["cleaned_code_subtree_elements_unique"]
 
+        if unique_included_types is None:
+            continue
+
         for node in node_types:
             if node in unique_included_types:
                 simple_dict[node] = POSITIVE
