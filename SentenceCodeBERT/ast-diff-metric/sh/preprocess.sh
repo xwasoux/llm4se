@@ -4,7 +4,7 @@ mkdir ../data ../data/PrunedAST ../data/PrunedAST/inputExample
 mkdir ../output ../output/PrunedAST 
 cd ../data/PrunedAST
 
-gdown 1Qzfh7exLYi5VrICS0syPh9h32Siab76q # 500 programs
+gdown 1hwYgOMeM22iah_LuPzlxqRzbUhtQNdF8 # 500 programs
 unzip PrunedAST.zip
 rm PrunedAST.zip
 
