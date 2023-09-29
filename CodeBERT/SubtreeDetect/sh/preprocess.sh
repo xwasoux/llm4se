@@ -1,6 +1,6 @@
 CURRENT=$(pwd)
 
-mkdir ../data
+mkdir ../data ../data/SubtreeElement ../data/inputs
 cd ../data
 
 gdown 1pj_fzfcl77230ydB-qUQw2oxcEBUBMw8
