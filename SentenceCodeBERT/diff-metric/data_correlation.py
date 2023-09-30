@@ -2,6 +2,7 @@ import os
 import csv
 import numpy as np
 import pandas as pd
+import argparse
 import tree_sitter
 from tree_sitter import Node, Language, Parser
 
@@ -24,30 +25,49 @@ def code_parse(edited_code):
             return False
     return True
 
-def extract_data_from_csv(csv_file, edited_code_colum, inspect_score_colum):
+def extract_data_from_csv(csv_file, edited_code_label, inspect_score_label):
     score_list = []
     
     with open(csv_file, mode="r", newline="") as file:
         reader = csv.reader(file)
         header = next(reader)
         
+        try:
+            edited_code_colum = header.index(edited_code_label)
+            inspect_score_colum = header.index(inspect_score_label)
+        except ValueError:
+            raise ValueError("Column labels not found in the CSV header.")
+        
         for row in reader:
             if code_parse(row[edited_code_colum]):
                 score_list.append(float(row[inspect_score_colum]))
-                
+    
     return score_list  
 
-back_csv_path = "/workspace/SentenceCodeBERT/diff-metric/output/PrunedAST/inspectOutside/sequence_backward_fs/2023-09-28_16-05-36_sequence-backward_cls-max-mean.csv"
-complete_csv_path = "/workspace/SentenceCodeBERT/diff-metric/output/PrunedAST/inspectOutside/single_complete_fs/2023-09-28_16-09-22_single-complete_cls-max-mean.csv"
-cls_score = np.array(extract_data_from_csv(complete_csv_path, 12, 51))
-max_score = np.array(extract_data_from_csv(complete_csv_path, 12, 52))
-mean_score = np.array(extract_data_from_csv(complete_csv_path, 12, 53))
-diff_char_size = np.array(extract_data_from_csv(complete_csv_path, 12, 40))
+def calculate_and_print_correlations(csv_path):
+    cls_score = np.array(extract_data_from_csv(csv_path, "edited_code", "inspect_cls"))
+    max_score = np.array(extract_data_from_csv(csv_path, "edited_code", "inspect_max"))
+    mean_score = np.array(extract_data_from_csv(csv_path, "edited_code", "inspect_mean"))
 
-cls_correlation_coefficient = calculate_correlation(cls_score, diff_char_size)
-max_correlation_coefficient = calculate_correlation(max_score, diff_char_size)
-mean_correlation_coefficient = calculate_correlation(mean_score, diff_char_size)
+    diff_char_size = np.array(extract_data_from_csv(csv_path, "edited_code", "cleaned_code_diff_line_size"))
+    
+    cls_correlation_coefficient = calculate_correlation(cls_score, diff_char_size)
+    max_correlation_coefficient = calculate_correlation(max_score, diff_char_size)
+    mean_correlation_coefficient = calculate_correlation(mean_score, diff_char_size)
 
-print("cls : ", cls_correlation_coefficient)
-print("max : ", max_correlation_coefficient)
-print("mean : ", mean_correlation_coefficient)
+    print("cls : ", cls_correlation_coefficient)
+    print("max : ", max_correlation_coefficient)
+    print("mean : ", mean_correlation_coefficient)
+    
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--csv_path', type=str)
+
+    args = parser.parse_args()
+    
+    calculate_and_print_correlations(args.csv_path)
+    
+    
+if __name__ == '__main__':
+    main()
