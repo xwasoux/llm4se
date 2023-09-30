@@ -1,7 +1,7 @@
 python3 ../run_classifier.py \
     --model_name_or_path microsoft/codebert-base \
     --do_train \
-    --node_types if_statement elif_clause else_clause for_statement while_statement expression_statement return_statement break_statement with_statement \
+    --node_types  for_statement while_statement expression_statement return_statement break_statement with_statement \
     --train_batch_size 4 \
     --epoch_num 10 \
     --learning_rate 2e-5 \
@@ -11,3 +11,5 @@ python3 ../run_classifier.py \
     --use_dataset_size 5000 \
     --input_base_dir ../data/inputs \
     --save_model_base_dir ../output/model 
+
+    # --node_types if_statement elif_clause else_clause for_statement while_statement expression_statement return_statement break_statement with_statement \

@@ -1,13 +1,13 @@
-CURRENT=$(pwd)
+# CURRENT=$(pwd)
 
-mkdir ../data ../data/SubtreeElement ../data/inputs
-cd ../data
+# mkdir ../data ../data/SubtreeElement ../data/inputs
+# cd ../data
 
-gdown 1pj_fzfcl77230ydB-qUQw2oxcEBUBMw8
-unzip SubtreeElement.zip
-rm  SubtreeElement.zip
+# gdown 1pj_fzfcl77230ydB-qUQw2oxcEBUBMw8
+# unzip SubtreeElement.zip
+# rm  SubtreeElement.zip
 
-cd $CURRENT
+# cd $CURRENT
 
 lang=python
 python3 ../preprocess.py \
