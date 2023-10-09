@@ -1,13 +1,9 @@
 import os
 import csv
 import ast
+import argparse
 import numpy as np
 import pandas as pd
-import argparse
-import tree_sitter
-from tree_sitter import Node, Language, Parser
-
-from astars import AParser, ATraverser
 
 def calculate_correlation(series1:np.ndarray, series2:np.ndarray) -> float:
     if len(series1) != len(series2):
