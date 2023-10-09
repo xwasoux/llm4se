@@ -9,14 +9,14 @@ from tree_sitter import Node, Language, Parser
 
 from astars import AParser, ATraverser
 
-def calculate_correlation(series1: np.ndarray, series2: np.ndarray) -> float:
+def calculate_correlation(series1:np.ndarray, series2:np.ndarray) -> float:
     if len(series1) != len(series2):
         raise ValueError("Both series must have the same length.")
     correlation_coefficient = np.corrcoef(series1, series2)[0, 1]
     
     return correlation_coefficient
 
-def parse_judge(edited_code: str) -> bool:
+def parse_judge(edited_code:str) -> bool:
     try:
         res = ast.parse(edited_code)
         return True
@@ -24,7 +24,7 @@ def parse_judge(edited_code: str) -> bool:
         return False
     
 
-def extract_data_from_csv(csv_file: str, edited_code_label: str, inspect_score_label: str) -> list[list[float]]:
+def extract_data_from_csv(csv_file:str, edited_code_label:str, inspect_score_label:str) -> list:
     score_list = []
     
     with open(csv_file, mode="r", newline="") as file:
@@ -44,7 +44,7 @@ def extract_data_from_csv(csv_file: str, edited_code_label: str, inspect_score_l
                                   
     return score_list  
 
-def extract_code_from_csv(csv_file: str) -> tuple[list[str], list[str]]:
+def extract_code_from_csv(csv_file:str) -> list:
     cleaned_code_list = []
     edited_code_list = []
     
@@ -67,7 +67,7 @@ def extract_code_from_csv(csv_file: str) -> tuple[list[str], list[str]]:
             
     return cleaned_code_list, edited_code_list
                 
-def create_score_list(csv_path: str) -> tuple[list[float], list[float], list[float], list[int]]:
+def create_score_list(csv_path:str) -> np.array:
     cls_score = np.array(extract_data_from_csv(csv_path, "edited_code", "inspect_cls"))
     max_score = np.array(extract_data_from_csv(csv_path, "edited_code", "inspect_max"))
     mean_score = np.array(extract_data_from_csv(csv_path, "edited_code", "inspect_mean"))
@@ -76,7 +76,7 @@ def create_score_list(csv_path: str) -> tuple[list[float], list[float], list[flo
     
     return cls_score, max_score, mean_score, diff_char_size
 
-def calculate_and_print_correlations(csv_path: str) -> None:
+def calculate_and_print_correlations(csv_path:str) -> None:
     result = create_score_list(csv_path)
     cls_score, max_score, mean_score, diff_char_size = result
     cls_correlation_coefficient = calculate_correlation(cls_score, diff_char_size)
