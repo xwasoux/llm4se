@@ -1,4 +1,4 @@
-dir_name=ProjectName
+dir_name=$1
 
 mkdir $dir_name
 cd $dir_name
