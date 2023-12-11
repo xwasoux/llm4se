@@ -2,31 +2,19 @@ import re
 import os
 import json
 import sys
-import glob
 import pickle
 import logging
 import argparse
+import utils
 import pandas as pd
 from tqdm import tqdm
+
+from utils import get_children_dir_paths
 
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
-
-def get_children_dir_paths(pathName:str) -> list:
-    condition = f'{pathName}/*/'
-    return glob.glob(condition)
-
-def get_jsonl_paths(pathName:str) -> list:
-    condition = f'{pathName}/*.jsonl'
-    return glob.glob(condition)
-
-def remove_comments(code) -> str:
-    code = re.sub(r'\"\"\"(.|\n)*?\"\"\"', '', code)   # """comments"""
-    code = re.sub(r"\'\'\'(.|\n)*?\'\'\'", '', code)   # '''comments'''
-    code = re.sub(r'\#.*', '', code)                   ##comments
-    return code
 
 def format_jsonl(json_line:list, node_types:list) -> list:
     extract_lines = []
@@ -40,10 +28,12 @@ def format_jsonl(json_line:list, node_types:list) -> list:
         simple_dict["path"] = line["path"]
         simple_dict["func_name"] = line["func_name"]
         simple_dict["lang"] = line["language"]
+        simple_dict["text"] = line["cleaned_code"]
+        unique_included_types = line["cleaned_code_subtree_elements_unique"]
 
-        simple_dict["text"] = remove_comments(line["code"])
+        if unique_included_types is None:
+            continue
 
-        unique_included_types = line["subtree_elements_unique"]
         for node in node_types:
             if node in unique_included_types:
                 simple_dict[node] = POSITIVE
@@ -71,7 +61,7 @@ def main():
         lang = lang_path.split("/")[-2]
         logging.info(f"=== {lang} ===")
 
-        partition_jsonl_paths = get_jsonl_paths(lang_path)
+        partition_jsonl_paths = utils.get_jsonl_paths(lang_path)
 
         for jsonl_path in partition_jsonl_paths:
             with open(jsonl_path, "r") as f:
