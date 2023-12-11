@@ -64,7 +64,7 @@ def main():
                     for line in jsonl_data:
                         all_input_examples.append(InputExample(guid=f"index", 
                                                                 texts=[line["cleaned_code"], line["edited_code"]], 
-                                                                label=line["cos_sim_diff_node"]))
+                                                                label=line["cleaned_code_cosine_node"]))
 
                 logging.info(f"InputExample Data : {len(all_input_examples)}")
 
