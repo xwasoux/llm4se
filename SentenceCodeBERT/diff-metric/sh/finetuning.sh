@@ -6,10 +6,10 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/PrunedAST/inputExample \
     --language python \
-    --train_datas rule_point back_seq \
+    --train_datas single_selected sequence_forward sequence_backward single_complete \
     --base_model_save_path ../output/PrunedAST \
     --pooling_mode_cls \
-    --upper_data_size 100
+    --upper_data_size 300
 
 python3 ../run.py \
     --model_name_or_path microsoft/codebert-base \
@@ -19,10 +19,10 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/PrunedAST/inputExample \
     --language python \
-    --train_datas rule_point back_seq \
+    --train_datas single_selected sequence_forward sequence_backward single_complete \
     --base_model_save_path ../output/PrunedAST \
     --pooling_mode_max \
-    --upper_data_size 100
+    --upper_data_size 300
 
 python3 ../run.py \
     --model_name_or_path microsoft/codebert-base \
@@ -32,7 +32,7 @@ python3 ../run.py \
     --evaluate_step 10 \
     --input_base_dir ../data/PrunedAST/inputExample \
     --language python \
-    --train_datas rule_point back_seq \
+    --train_datas single_selected sequence_forward sequence_backward single_complete \
     --base_model_save_path ../output/PrunedAST \
     --pooling_mode_mean \
-    --upper_data_size 100
+    --upper_data_size 300

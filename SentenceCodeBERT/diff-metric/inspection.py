@@ -97,12 +97,8 @@ def main():
         pooler_name = "-".join(res)
         pooler_types.append(pooler_name)
         for line in jsonline:
-            flattened_code = re.sub(r"\n", " ", re.sub(r"\s+", " ", line["cleaned_code"]))
-            flattened_edited_code = re.sub(r"\n", " ", re.sub(r"\s+", " ", line["edited_code"]))
-            line["flattened_code"] = flattened_code
-            line["flattened_edited_code"] = flattened_edited_code
-            source_embedding = model_tuned.encode(flattened_code, convert_to_tensor=True)
-            target_embedding = model_tuned.encode(flattened_edited_code, convert_to_tensor=True)
+            source_embedding = model_tuned.encode(line["cleaned_code"], convert_to_tensor=True)
+            target_embedding = model_tuned.encode(line["edited_code"], convert_to_tensor=True)
 
             cosine_score = util.cos_sim(source_embedding, target_embedding)
             line[f"inspect_{pooler_name}"] = cosine_score[0][0].item()

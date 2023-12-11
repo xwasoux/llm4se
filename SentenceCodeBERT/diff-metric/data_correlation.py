@@ -39,6 +39,7 @@ def extract_data_from_csv(csv_file, edited_code_label, inspect_score_label):
             raise ValueError("Column labels not found in the CSV header.")
         
         for row in reader:
+
             if code_parse(row[edited_code_colum]):
                 score_list.append(float(row[inspect_score_colum]))
     
@@ -87,6 +88,8 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--csv_path', type=str)
+
+    parser.add_argument('--output_correlation', action="store_true")
     parser.add_argument('--output_filtered_csv', action="store_true")
 
     args = parser.parse_args()
@@ -94,6 +97,10 @@ def main():
     score_list = create_score_list(args.csv_path)
     cls_score, max_score, mean_score, diff_char_size = score_list
     calculate_and_print_correlations(cls_score, max_score, mean_score, diff_char_size)
+    if args.output_correlation:
+        calculate_and_print_correlations(args.csv_path)
+    else:
+        pass
     
     if args.output_filtered_csv:
         export_filtered_csv(args.csv_path)
