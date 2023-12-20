@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  llm_for_se:
+  llm_4_se:
     build:
       context: ./environment/ubuntu
       # CPU
