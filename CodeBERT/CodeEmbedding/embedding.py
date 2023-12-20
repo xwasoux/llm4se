@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 import argparse
 
-from encoder import CodeBertEncoder
+from model import CodeBertEncoder
 from analyser import EmbeddingAnalyser
 
 def sep_csv(csv_data_path):
