@@ -2,6 +2,6 @@
 python ../run.py \
     --model_name_or_path microsoft/codebert-base \
     --torch_transformer \
-    --csv_data_path ../data/input.csv \
-    --dimention 2 \
-    --outputdir ../output
+    --data_dir ../data/input.csv \
+    --dim 2 \
+    --output_dir ../output

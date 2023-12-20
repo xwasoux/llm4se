@@ -29,10 +29,10 @@ def main():
 
     parser.add_argument("--torch_transformer", action="store_true")
     parser.add_argument("--sentence_transformer", action="store_true")
-    parser.add_argument("--dimention", type=int)
+    parser.add_argument("--dim", type=int)
 
-    parser.add_argument("--csv_data_path", type=str)
-    parser.add_argument("--outputdir", type=str)
+    parser.add_argument("--data_dir", type=str)
+    parser.add_argument("--output_dir", type=str)
     args = parser.parse_args()
 
     logging.basicConfig(format='%(asctime)s - %(message)s',
