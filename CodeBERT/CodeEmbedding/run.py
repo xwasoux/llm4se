@@ -51,17 +51,17 @@ def main():
         logging.info("Embedding Codes...")
         embeddings = code_encoder.embedding()
 
-        ## Todo: separate class (named Analyser)
-        logging.info(f"Reducing to {args.dimention} Dimension...")
-        analyser = EmbeddingAnalyser(codes=code_list,
-                            embeddings=embeddings, labels=label_list)
-        analyser.reduce_dimension(dim=args.dimention)
+    ## Todo: separate class (named Analyser)
+    logging.info(f"Reducing to {args.dimention} Dimension...")
+    analyser = EmbeddingAnalyser(codes=code_list,
+                        embeddings=embeddings, labels=label_list)
+    analyser.reduce_dimension(dim=args.dimention)
 
-        logging.info(f"Plotting Destributed Representation of Codes...")
-        analyser.plot_embedding()
+    logging.info(f"Plotting Destributed Representation of Codes...")
+    analyser.plot_embedding()
 
-        logging.info(f"Calculating Cosine Similarity of Code pairs...")
-        analyser.conineSimilarity(dir=args.outputdir)
+    logging.info(f"Calculating Cosine Similarity of Code pairs...")
+    analyser.conineSimilarity(dir=args.outputdir)
 
     return None
 
