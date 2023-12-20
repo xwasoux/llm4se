@@ -6,8 +6,13 @@ import logging
 from datetime import datetime
 import argparse
 
-from encoder import CodeBertEncoder
+from model import CodeBertEncoder
 from analyser import EmbeddingAnalyser
+
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.INFO
+                    )
 
 def sep_csv(csv_data_path):
     code_list = []
@@ -29,16 +34,11 @@ def main():
 
     parser.add_argument("--torch_transformer", action="store_true")
     parser.add_argument("--sentence_transformer", action="store_true")
-    parser.add_argument("--dimention", type=int)
+    parser.add_argument("--dim", type=int)
 
-    parser.add_argument("--csv_data_path", type=str)
-    parser.add_argument("--outputdir", type=str)
+    parser.add_argument("--data_dir", type=str)
+    parser.add_argument("--output_dir", type=str)
     args = parser.parse_args()
-
-    logging.basicConfig(format='%(asctime)s - %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S',
-                        level=logging.INFO
-                        )
 
     code_list, label_list = sep_csv(args.csv_data_path)
 
@@ -51,17 +51,17 @@ def main():
         logging.info("Embedding Codes...")
         embeddings = code_encoder.embedding()
 
-        ## Todo: separate class (named Analyser)
-        logging.info(f"Reducing to {args.dimention} Dimension...")
-        analyser = EmbeddingAnalyser(codes=code_list,
-                            embeddings=embeddings, labels=label_list)
-        analyser.reduce_dimension(dim=args.dimention)
+    ## Todo: separate class (named Analyser)
+    logging.info(f"Reducing to {args.dimention} Dimension...")
+    analyser = EmbeddingAnalyser(codes=code_list,
+                        embeddings=embeddings, labels=label_list)
+    analyser.reduce_dimension(dim=args.dimention)
 
-        logging.info(f"Plotting Destributed Representation of Codes...")
-        analyser.plot_embedding()
+    logging.info(f"Plotting Destributed Representation of Codes...")
+    analyser.plot_embedding()
 
-        logging.info(f"Calculating Cosine Similarity of Code pairs...")
-        analyser.conineSimilarity(dir=args.outputdir)
+    logging.info(f"Calculating Cosine Similarity of Code pairs...")
+    analyser.conineSimilarity(dir=args.outputdir)
 
     return None
 
