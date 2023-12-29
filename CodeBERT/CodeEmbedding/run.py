@@ -185,18 +185,18 @@ def main():
     logging.info(df.head())
     my_data = MyDataset(dataset=df)
 
-    code_encoder = CodeBertEncoder()
-    code_encoder.input(sentences=my_data.data)
+    encoder = CodeBertEncoder()
+    encoder.input(sentences=my_data.data)
 
     logging.info("Embedding Codes...")
-    embeddings = code_encoder.embedding()
+    embeddings = encoder.embedding()
 
-    logging.info(f"Reducing to {args.dimention} Dimension...")
-    analyser = DimReducer(codes=my_data.data, embeddings=embeddings, labels=my_data.label)
-    analyser.reduce_dimension(dim=args.dimention)
+    logging.info(f"Reducing to {args.dim} Dimension...")
+    reducer = DimReducer(codes=my_data.data, embeddings=embeddings, labels=my_data.label)
+    reducer.reduce_dimension(dim=args.dim)
 
     logging.info(f"Plotting Destributed Representation of Codes...")
-    analyser.plot_embedding()
+    reducer.plot_embedding()
 
     return None
 
