@@ -125,27 +125,6 @@ class EmbeddingAnalyser:
 
         self.embedding_fig.write_html(file_name)
 
-    def conineSimilarity(self, dir:str, fileName:str="cosSim.csv"):
-        pairList = []
-        cos = torch.nn.CosineSimilarity(dim=0)
-
-        self.svectors = [torch.from_numpy(svector).clone() for svector in self.all_pooler_vectors]
-
-        for label, vector in zip(self.labels, self.svectors):
-            for lab, vec in zip(self.labels, self.svectors):
-                eachLine = {}
-                eachLine["index"] = f"{label}_{lab}"
-                eachLine["source"] = label
-                eachLine["target"] = lab
-                
-                eachLine["cosSim"] = float(cos(vector, vec))
-                
-                pairList.append(eachLine)
-        
-        df = pd.DataFrame(pairList)
-        df.to_csv(f"{dir}/{fileName}")
-
-        return None
 
     def clustering(self, algo="heirarchal"):
         if algo == "heirarchal":
@@ -216,9 +195,6 @@ def main():
 
     logging.info(f"Plotting Destributed Representation of Codes...")
     analyser.plot_embedding()
-
-    logging.info(f"Calculating Cosine Similarity of Code pairs...")
-    analyser.conineSimilarity(dir=args.outputdir)
 
     return None
 
