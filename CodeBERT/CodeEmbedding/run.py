@@ -183,8 +183,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name_or_path", type=str)
 
-    parser.add_argument("--torch_transformer", action="store_true")
-    parser.add_argument("--sentence_transformer", action="store_true")
     parser.add_argument("--dim", type=int)
 
     parser.add_argument("--data_dir", type=str)
@@ -193,14 +191,11 @@ def main():
 
     code_list, label_list = sep_csv(args.csv_data_path)
 
-    if args.torch_transformer:
-        logging.info("torch_transformer")
+    code_encoder = CodeBertEncoder()
+    code_encoder.input(sentences=code_list)
 
-        code_encoder = CodeBertEncoder()
-        code_encoder.input(sentences=code_list)
-
-        logging.info("Embedding Codes...")
-        embeddings = code_encoder.embedding()
+    logging.info("Embedding Codes...")
+    embeddings = code_encoder.embedding()
 
     ## Todo: separate class (named Analyser)
     logging.info(f"Reducing to {args.dimention} Dimension...")
