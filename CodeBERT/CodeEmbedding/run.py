@@ -19,6 +19,7 @@ from umap import UMAP
 from hdbscan import HDBSCAN
 
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -54,7 +55,7 @@ class MyDataset:
     def __getitem__(self, idx):
         return self.data[idx], self.label[idx]
 
-def select_pooler(vectors, pooling_type="cls"):
+def select_pooler(vectors, pooling_type: str = "cls"):
     if pooling_type == "cls":
         return vectors[0]
     elif pooling_type == "mean":
@@ -62,8 +63,8 @@ def select_pooler(vectors, pooling_type="cls"):
     elif pooling_type == "max":
         return torch.max(input=torch.from_numpy(vectors[1:-1]).clone(), dim=1)
 
-class EmbeddingAnalyser:
-    def __init__(self, codes:list, embeddings:list, labels:list) -> None:
+class DimReducer:
+    def __init__(self, codes: list, embeddings: list, labels: list) -> None:
         if len(embeddings) != len(labels):
             ValueError()
 
@@ -71,7 +72,7 @@ class EmbeddingAnalyser:
         self.embeddings = embeddings
         self.labels = labels
 
-    def reduce_dimension(self, method="umap", dim=2, pooling="cls") -> None:
+    def reduce_dimension(self, method: str = "umap", dim: int = 2, pooling: str = "cls") -> None:
         if not self.embeddings:
             ValueError()
         
@@ -102,9 +103,8 @@ class EmbeddingAnalyser:
         self.compressed_df = pd.DataFrame(data=self.compressed_vectors, index=df_index)
         self.compressed_df["Code"] = self.codes
         self.compressed_df["label"] = self.labels
-        print(self.compressed_df)
 
-    def plot_embedding(self, file_name:str="plotEmbedding.html") -> None:
+    def plot_embedding(self, file_name: str = "plotEmbedding.html") -> None:
         if self.dim == 2:
             self.embedding_fig = px.scatter(self.compressed_df, 
                                             x=0, 
@@ -126,8 +126,12 @@ class EmbeddingAnalyser:
         self.embedding_fig.write_html(file_name)
 
 
-    def clustering(self, algo="heirarchal"):
-        if algo == "heirarchal":
+class ClusterAnalyser:
+    def __init__(self, compressed_vectors: np.ndarray) -> None:
+        self.compressed_vectors = compressed_vectors
+
+    def clustering(self, algo: str = "hierarchal"):
+        if algo == "hierarchal":
             pass
         elif algo == "hdbscan":
             self.hdbscan = HDBSCAN().fit(self.compressed_vectors)
@@ -145,7 +149,7 @@ class EmbeddingAnalyser:
             
             self.compressed_df["label_type"] = self.type_labels
 
-    def plot_clustering(self, file_name="plot_clustering.html") -> None:
+    def plot_clustering(self, file_name: str = "plot_clustering.html") -> None:
         if self.dim == 2:
             self.clustering_fig = px.scatter(self.compressed_df, 
                                             x=0, 
@@ -187,10 +191,8 @@ def main():
     logging.info("Embedding Codes...")
     embeddings = code_encoder.embedding()
 
-    ## Todo: separate class (named Analyser)
     logging.info(f"Reducing to {args.dimention} Dimension...")
-    analyser = EmbeddingAnalyser(codes=my_data.data,
-                        embeddings=embeddings, labels=my_data.label)
+    analyser = DimReducer(codes=my_data.data, embeddings=embeddings, labels=my_data.label)
     analyser.reduce_dimension(dim=args.dimention)
 
     logging.info(f"Plotting Destributed Representation of Codes...")
