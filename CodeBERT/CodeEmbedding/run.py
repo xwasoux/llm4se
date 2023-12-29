@@ -43,6 +43,17 @@ def sep_csv(csv_data_path):
     
     return code_list, label_list
 
+class MyDataset:
+    def __init__(self, dataset: pd.DataFrame) -> None:
+        self.label = dataset["repo"].tolist()
+        self.data = dataset["cleaned_code"].tolist()
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        return self.data[idx], self.label[idx]
+
 def select_pooler(vectors, pooling_type="cls"):
     if pooling_type == "cls":
         return vectors[0]
@@ -182,25 +193,25 @@ class EmbeddingAnalyser:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name_or_path", type=str)
-
     parser.add_argument("--dim", type=int)
-
-    parser.add_argument("--data_dir", type=str)
-    parser.add_argument("--output_dir", type=str)
+    parser.add_argument("--data_path", type=str)
+    parser.add_argument("--output_path", type=str)
     args = parser.parse_args()
 
-    code_list, label_list = sep_csv(args.csv_data_path)
+    df = pd.read_json(args.data_path, orient='records', lines=True)
+    logging.info(df.head())
+    my_data = MyDataset(dataset=df)
 
     code_encoder = CodeBertEncoder()
-    code_encoder.input(sentences=code_list)
+    code_encoder.input(sentences=my_data.data)
 
     logging.info("Embedding Codes...")
     embeddings = code_encoder.embedding()
 
     ## Todo: separate class (named Analyser)
     logging.info(f"Reducing to {args.dimention} Dimension...")
-    analyser = EmbeddingAnalyser(codes=code_list,
-                        embeddings=embeddings, labels=label_list)
+    analyser = EmbeddingAnalyser(codes=my_data.data,
+                        embeddings=embeddings, labels=my_data.label)
     analyser.reduce_dimension(dim=args.dimention)
 
     logging.info(f"Plotting Destributed Representation of Codes...")
