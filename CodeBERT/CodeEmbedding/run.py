@@ -187,11 +187,9 @@ def main():
     logging.info(df.head())
     my_data = MyDataset(dataset=df)
 
-    encoder = CodeBertEncoder()
-    encoder.input(sentences=my_data.data)
-
     logging.info("Embedding Codes...")
-    embeddings = encoder.embedding()
+    encoder = CodeBertEncoder()
+    embeddings = encoder.embedding(my_data.data)
 
     logging.info(f"Reducing to {args.dim} Dimension...")
     reducer = DimReducer(codes=my_data.data, embeddings=embeddings, labels=my_data.label)

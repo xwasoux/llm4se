@@ -21,8 +21,8 @@ class CodeBertEncoder:
     def __init__(self, tokenizer=base_tokenizer, model=base_model) -> None:
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer)
         self.model = AutoModel.from_pretrained(model)
-        
-    def input(self, sentences:list) -> None:
+
+    def embedding(self, sentences: list) -> list:
         self.sentences = sentences
         self.tokenized_code_ids = []
         for sentence in sentences:
@@ -30,7 +30,6 @@ class CodeBertEncoder:
             tokens_ids = [self.tokenizer.cls_token] + tokenize_codes + [self.tokenizer.sep_token]
             self.tokenized_code_ids.append(self.tokenizer.convert_tokens_to_ids(tokens_ids))
 
-    def embedding(self) -> list:
         self.embeddings = []
         for code_ids in self.tokenized_code_ids:
             self.embeddings.append(self.model(torch.tensor(code_ids)[None, :]))
