@@ -72,7 +72,7 @@ class DimReducer:
         self.embeddings = embeddings
         self.labels = labels
 
-    def reduce_dimension(self, method: str = "umap", dim: int = 2, pooling: str = "cls") -> None:
+    def reduce_dimension(self, method: str = "umap", dim: int = 2, pooling: str = "cls") -> pd.DataFrame:
         if not self.embeddings:
             ValueError()
         
@@ -103,6 +103,8 @@ class DimReducer:
         self.compressed_df = pd.DataFrame(data=self.compressed_vectors, index=df_index)
         self.compressed_df["Code"] = self.codes
         self.compressed_df["label"] = self.labels
+    
+        return self.compressed_df
 
     def plot_embedding(self, file_name: str = "plotEmbedding.html") -> None:
         if self.dim == 2:
