@@ -21,6 +21,7 @@ class CodeBertEncoder:
     def __init__(self, tokenizer=base_tokenizer, model=base_model) -> None:
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer)
         self.model = AutoModel.from_pretrained(model)
+        self.max_length = 512
 
     def embedding(self, sentences: list) -> list:
         self.sentences = sentences
@@ -32,6 +33,8 @@ class CodeBertEncoder:
 
         self.embeddings = []
         for code_ids in self.tokenized_code_ids:
+            if len(code_ids) > self.max_length:
+                code_ids = code_ids[:self.max_length]
             self.embeddings.append(self.model(torch.tensor(code_ids)[None, :]))
 
         return self.embeddings
