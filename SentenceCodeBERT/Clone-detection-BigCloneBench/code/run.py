@@ -86,7 +86,9 @@ def main() -> None:
     logging.basicConfig(format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO, 
-                        filename=os.path.join(args.output_dir, 'log.txt'))
+                        handlers=[LoggingHandler()])
+    logger = logging.getLogger(__name__)
+
 
     ## Create model output directory
     pooler_name = create_pooler_name(args=args)
