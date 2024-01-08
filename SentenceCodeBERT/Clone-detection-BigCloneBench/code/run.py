@@ -87,19 +87,22 @@ def main() -> None:
     args = parser.parse_args()
 
 
-    logging.basicConfig(format='%(asctime)s - %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S',
-                        level=logging.INFO, 
-                        handlers=[LoggingHandler()])
-    logger = logging.getLogger(__name__)
-
-
     ## Create model output directory
     pooler_name = create_pooler_name(args=args)
     model_save_path = os.path.join(args.output_dir, 
                                     args.model_name_or_path.replace("/", "-") + '_' + \
                                     pooler_name + '_' + \
                                     datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    if not os.path.exists(model_save_path):
+        os.makedirs(model_save_path)
+
+    ## Create logger
+    logging.basicConfig(format='%(asctime)s - %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        level=logging.INFO, 
+                        filename=os.path.join(model_save_path, 'log.txt'))
+    logger = logging.getLogger(__name__)
+
 
     if args.model_name_or_path:
         word_embedding_model = models.Transformer(args.model_name_or_path)
