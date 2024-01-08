@@ -121,6 +121,14 @@ def main() -> None:
                                                                                             show_progress_bar=True)
 
         ## Train the model
+        logger.info("********** Running training **********")
+        logger.info("   Num examples = {}".format(len(train_dataset)))
+        logger.info("   Num Epochs = {}".format(args.epochs_num))
+        logger.info("   Batch size = {}".format(args.train_batch_size))
+        logger.info("   Pooler name = {}".format(pooler_name))
+        logger.info("   Evaluate step = {}".format(args.evaluate_step))
+        logger.info("   Model save path: {}".format(model_save_path))
+
         model.fit(train_objectives=[(train_dataloader, train_loss)],
                     epochs=args.epochs_num,
                     evaluator=binary_acc_evaluator,
