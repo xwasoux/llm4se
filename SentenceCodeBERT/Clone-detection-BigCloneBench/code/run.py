@@ -68,6 +68,10 @@ def main() -> None:
     parser.add_argument('--valid_data_file', type=str, default=None)
     parser.add_argument('--test_data_file', type=str, default=None)
 
+    parser.add_argument('--train_max_examples_size', type=int)
+    parser.add_argument('--valid_max_examples_size', type=int)
+    parser.add_argument('--test_max_examples_size', type=int)
+
     parser.add_argument('--do_train', action="store_true")
     parser.add_argument('--do_evaluate', action="store_true")
     parser.add_argument('--do_test', action="store_true")
@@ -109,11 +113,15 @@ def main() -> None:
     if args.do_train:
         ## Create data loader and loss function for ContrastiveLoss
         train_dataset = load_and_cache_examples(args, eval=False, test=False)
+        if args.train_max_examples_size:
+            train_dataset = train_dataset[:args.train_max_examples_size]
         train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=args.train_batch_size)
         train_loss = losses.ContrastiveLoss(model=model)
 
         ## Create data loader and evaluator for BinaryClassificationEvaluator
         valid_dataset = load_and_cache_examples(args, eval=True, test=False)
+        if args.valid_max_examples_size:
+            valid_dataset = valid_dataset[:args.valid_max_examples_size]
         binary_acc_evaluator = evaluation.BinaryClassificationEvaluator.from_input_examples(examples=valid_dataset,
                                                                                             name='valid',
                                                                                             batch_size=args.train_batch_size,

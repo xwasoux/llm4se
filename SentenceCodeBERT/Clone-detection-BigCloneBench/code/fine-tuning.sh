@@ -8,4 +8,6 @@ python3 run.py \
     --train_batch_size 64 \
     --epochs_num 10 \
     --evaluate_step 1000 \
+    --train_max_examples_size 8000 \
+    --valid_max_examples_size 1000 \
     --pooling_mode_mean
