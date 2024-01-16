@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/docker-from-docker-compose
 {
-	"name": "llm for se",
+	"name": "llm4se",
 	"dockerComposeFile": "./docker-compose.yml",
-	"service": "llm_for_se",
+	"service": "llm4se",
 	"workspaceFolder": "/workspace",
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"remoteEnv": {
