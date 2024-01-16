@@ -1,0 +1,13 @@
+python3 run.py \
+    --model_name_or_path microsoft/codebert-base \
+    --index_data_file ../dataset/data.jsonl \
+    --train_data_file ../dataset/train.tsv \
+    --valid_data_file ../dataset/valid.tsv \
+    --output_dir ./saved_model \
+    --do_train \
+    --train_batch_size 64 \
+    --epochs_num 10 \
+    --evaluate_step 1000 \
+    --train_max_examples_size 8000 \
+    --valid_max_examples_size 1000 \
+    --pooling_mode_mean

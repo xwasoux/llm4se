@@ -128,21 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Directory
-output/
-clone/
-inputs/
 
-# file extension
-*.txt
-*.json
-*.jsonl
-*.gz
-*.tar
-*.zip
-*.pickle
-*.lock
-*.csv
-*.tsv
-*.html
-*.cas
+# vscode
+.vscode/
+
