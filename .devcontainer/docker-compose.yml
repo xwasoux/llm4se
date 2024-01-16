@@ -4,8 +4,6 @@ services:
   llm_4_se:
     build:
       context: ./environment/ubuntu
-      # CPU
-      # dockerfile: Dockerfile
       # GPU
       dockerfile: Dockerfile.gpu
       args:
