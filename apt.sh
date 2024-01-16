@@ -1,4 +1,8 @@
 sudo apt update -y
-sudo apt -y install tig \
+sudo apt -y install \
+    tig \
     htop \
-    tmux
+    nvtop \
+    tmux \
+    vim \
+    tree
