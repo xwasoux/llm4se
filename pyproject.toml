@@ -42,6 +42,8 @@ nbformat = "^5.8.0"
 hdbscan = "^0.8.29"
 anytree = "^2.9.0"
 python-levenshtein = "^0.21.1"
+mypy = "^1.7.1"
+gitpython = "^3.1.40"
 
 
 [build-system]
