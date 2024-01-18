@@ -1,4 +1,3 @@
-sudo chmod -R 777 .
 sudo apt update -y
 sudo apt -y install \
     tig \
@@ -14,3 +13,6 @@ echo "Enter your git account email: "
 read email
 git config --global user.name $user
 git config --global user.email $email
+
+git config core.fileMode false
+sudo chmod -R 777 .
