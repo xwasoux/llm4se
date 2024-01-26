@@ -21,6 +21,10 @@ from tree_sitter import Language, Parser
 from data.parser import remove_comments_and_docstrings, get_functions_or_methods
 from utils import umap, tsne, pca
 
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from umap import UMAP
+
 import plotly
 import plotly.express as px
 import plotly.figure_factory as ff
@@ -31,6 +35,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 file_extension = {
     "go": [".go"],
@@ -153,6 +158,21 @@ class MyDataset:
     def __getitem__(self, idx):
         return self.sentences[idx], self.embeddings[idx]
 
+
+def umap(embeddings: list, idx: list, dim: int = 2) -> list:
+    df = pd.DataFrame(data=embeddings, index=idx)
+    reducer = UMAP(n_components=dim)
+    return reducer.fit_transform(df)
+
+def tsne(embeddings: list, idx: list, dim: int = 2) -> list:
+    df = pd.DataFrame(data=embeddings, index=idx)
+    reducer = TSNE(n_components=dim)
+    return reducer.fit_transform(df)
+
+def pca(embeddings: list, idx: list, dim: int = 2) -> list:
+    df = pd.DataFrame(data=embeddings, index=idx)
+    reducer = PCA(n_components=dim)
+    return reducer.fit_transform(df)
 
 def hierarchal_clustering(args: argparse, embeddings: list, img_file_name: str = "hierarchal_dendrogram.png",
                                     plot_html: bool = True, width: int = 800, height: int = 500) -> None:
