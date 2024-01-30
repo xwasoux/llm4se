@@ -13,6 +13,15 @@ The dataset we use is [BigCloneBench](https://www.cs.usask.ca/faculty/croy/paper
 
 ### Data Format
 
+```bash
+mkdir dataset
+cd dataset
+wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/data.jsonl
+wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/test.txt
+wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/train.txt
+wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/valid.txt
+```
+
 1. dataset/data.jsonl is stored in jsonlines format. Each line in the uncompressed file represents one function.  One row is illustrated below.
 
    - **func:** the function
@@ -42,6 +51,7 @@ python3 run.py \
     --valid_data_file ../dataset/valid.tsv \
     --output_dir ./saved_model \
     --do_train \
+    --evaluate_during_training \
     --train_batch_size 32 \
     --epochs_num 10 \
     --evaluate_step 100 \
@@ -50,6 +60,16 @@ python3 run.py \
     --pooling_mode_mean
 ```
 
+## Test
+
+```bash
+python3 run.py \
+    --model_name_or_path ./saved_model/microsoft-codebert-base_xxxx_yyyy-mm-dd_hh-mm-ss \
+    --index_data_file ../dataset/data.jsonl \
+    --test_data_file ../dataset/test.tsv \
+    --do_test \
+    --test_max_examples_size 1000
+```
 ## Repository Clustering
 
 ```bash
