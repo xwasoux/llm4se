@@ -25,9 +25,16 @@ except:
 from sentence_transformers import SentenceTransformer, LoggingHandler, losses, util, InputExample
 from sentence_transformers import models, losses, evaluation
 
-def convert_idx_to_input_example(args: argparse, index_data: pd.DataFrame, pair_data: pd.DataFrame) -> list:
+def convert_idx_to_input_example(args: argparse, index_data: pd.DataFrame, pair_data: pd.DataFrame, max_examples_size: int = None) -> list:
     input_examples = []
-    for _, row in tqdm(pair_data.iterrows()):
+    if max_examples_size is not None:
+        positive_pair = pair_data[pair_data['label'] == 1]
+        negative_pair = pair_data[pair_data['label'] == 0]
+        positive_pair = positive_pair.sample(n=max_examples_size//2, random_state=42)
+        negative_pair = negative_pair.sample(n=max_examples_size//2, random_state=42)
+        pair_data = pd.concat([positive_pair, negative_pair], ignore_index=True)
+
+    for _, row in tqdm(pair_data.iterrows(), total=len(pair_data)):
         idx1 = row['idx1']
         idx2 = row['idx2']
         text1 = index_data.loc[idx1]['func']
@@ -36,12 +43,12 @@ def convert_idx_to_input_example(args: argparse, index_data: pd.DataFrame, pair_
         input_examples.append(InputExample(texts=[text1, text2], label=label))
     return input_examples
 
-def load_and_cache_examples(args: argparse, eval: bool = False, test: bool = False) -> list:
+def load_and_cache_examples(args: argparse, eval: bool = False, test: bool = False, max_examples_size: int = None) -> list:
     file_path = args.test_data_file if test else (args.valid_data_file if eval else args.train_data_file)
     pair_data = pd.read_csv(file_path, sep='\t', header=None, names=['idx1', 'idx2', 'label'])
     index_data = pd.read_json(args.index_data_file, lines=True, orient='records', encoding='utf-8')
     index_data = index_data.set_index('idx')
-    return convert_idx_to_input_example(args, index_data, pair_data)
+    return convert_idx_to_input_example(args, index_data, pair_data, max_examples_size)
 
 
 def create_pooler_name(args: argparse) -> str:
@@ -127,17 +134,13 @@ def main() -> None:
 
     if args.do_train:
         ## Create data loader and loss function for ContrastiveLoss
-        train_dataset = load_and_cache_examples(args, eval=False, test=False)
-        if args.train_max_examples_size:
-            train_dataset = train_dataset[:args.train_max_examples_size]
+        train_dataset = load_and_cache_examples(args, eval=False, test=False, max_examples_size=args.train_max_examples_size)
         train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=args.train_batch_size)
         train_loss = losses.ContrastiveLoss(model=model)
 
         ## Create data loader and evaluator for BinaryClassificationEvaluator
         if args.evaluate_during_training:
-            valid_dataset = load_and_cache_examples(args, eval=True, test=False)
-            if args.valid_max_examples_size:
-                valid_dataset = valid_dataset[:args.valid_max_examples_size]
+            valid_dataset = load_and_cache_examples(args, eval=True, test=False, max_examples_size=args.valid_max_examples_size)
             binary_acc_evaluator = evaluation.BinaryClassificationEvaluator.from_input_examples(examples=valid_dataset,
                                                                                                 name='valid',
                                                                                                 batch_size=args.train_batch_size,
@@ -169,9 +172,7 @@ def main() -> None:
 
     if args.do_eval:
         ## Create data loader and evaluator for BinaryClassificationEvaluator
-        valid_dataset = load_and_cache_examples(args, eval=True, test=False)
-        if args.valid_max_examples_size:
-            valid_dataset = valid_dataset[:args.valid_max_examples_size]
+        valid_dataset = load_and_cache_examples(args, eval=True, test=False, max_examples_size=args.valid_max_examples_size)
         binary_acc_evaluator = evaluation.BinaryClassificationEvaluator.from_input_examples(examples=valid_dataset,
                                                                                             name='eval',
                                                                                             batch_size=args.train_batch_size,
@@ -189,9 +190,7 @@ def main() -> None:
 
     if args.do_test:
         ## Create data loader and evaluator for BinaryClassificationEvaluator
-        test_dataset = load_and_cache_examples(args, eval=False, test=True)
-        if args.test_max_examples_size:
-            test_dataset = random.sample(test_dataset, args.test_max_examples_size)
+        test_dataset = load_and_cache_examples(args, eval=False, test=True, max_examples_size=args.test_max_examples_size)
 
         ## Evaluate the model
         logger.info("********** Running test **********")
