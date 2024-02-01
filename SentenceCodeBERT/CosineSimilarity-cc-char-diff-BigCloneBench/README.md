@@ -1,5 +1,10 @@
 # Clone-detection-BigCloneBench
 
+## Update
+
+2024-02-02: Initial release.
+
+
 ## Task Definition
 
 Given two codes as input, the task is to perform Contrastive Learning with real labels ranging from 0.0 to 1.0. The model is evaluated by Pearson's correlation coefficient.
@@ -24,6 +29,7 @@ The dataset we use is [BigCloneBench](https://www.cs.usask.ca/faculty/croy/paper
 Data download & preprocessing way are shown below:
 
 ```bash
+wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/data.jsonl
 wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/train.txt
 wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/test.txt
 wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/valid.txt
