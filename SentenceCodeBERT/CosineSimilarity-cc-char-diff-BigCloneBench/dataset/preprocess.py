@@ -27,9 +27,9 @@ def convert_edit_distance_helper(args):
     text2 = index_data.loc[idx2]['func']
 
     edit_distance = Levenshtein.distance(text1, text2)
-    cosine_similarity = distance_to_cosine(edit_distance) if label == 1 else -1
+    cosine_label = distance_to_cosine(edit_distance) if label == 1 else -1
 
-    return idx1, idx2, edit_distance, cosine_similarity
+    return idx1, idx2, edit_distance, cosine_label
 
 def convert_edit_distance_parallel(index_data: pd.DataFrame, pair_data: pd.DataFrame) -> pd.DataFrame:
     with Pool() as pool:
@@ -37,9 +37,9 @@ def convert_edit_distance_parallel(index_data: pd.DataFrame, pair_data: pd.DataF
         results = list(tqdm(pool.imap(convert_edit_distance_helper, args_list), total=len(pair_data)))
 
     for result, (_, row) in zip(results, pair_data.iterrows()):
-        idx1, idx2, edit_distance, cosine_similarity = result
+        idx1, idx2, edit_distance, cosine_label = result
         pair_data.loc[row.name, 'edit_distance'] = edit_distance
-        pair_data.loc[row.name, 'cosine_label'] = cosine_similarity
+        pair_data.loc[row.name, 'cosine_label'] = cosine_label
 
     return pair_data
 
