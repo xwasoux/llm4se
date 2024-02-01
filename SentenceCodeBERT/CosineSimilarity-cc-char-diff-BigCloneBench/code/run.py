@@ -219,7 +219,7 @@ def main() -> None:
             text2 = index_data.loc[idx2]["func"]
 
             label = row["label"]
-            char_diff = row["char_diff"]
+            edit_distance = row["edit_distance"]
             cosine_label = row["cosine_label"]
 
             ## Embedding & calculate cosine simillarity
@@ -227,8 +227,8 @@ def main() -> None:
             text2_embedding = model.encode(text2, convert_to_tensor=True)
             cosine_score = util.cos_sim(text1_embedding, text2_embedding).cpu().numpy().item()
 
-            encode_result.append([text1, text2, label, char_diff, cosine_label, cosine_score])
-        result = pd.DataFrame(encode_result, columns=["text1", "text2", "label", "char_diff", "cosine_label", "cosine_score"])
+            encode_result.append([text1, text2, label, edit_distance, cosine_label, cosine_score])
+        result = pd.DataFrame(encode_result, columns=["text1", "text2", "label", "edit_distance", "cosine_label", "cosine_score"])
         filename = os.path.join(model_save_path, "{}.tsv".format(partition + "-res_" + datetime_now))
         result.to_csv(filename, sep="\t")
         
