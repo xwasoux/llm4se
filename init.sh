@@ -8,7 +8,7 @@ sudo apt -y install \
     vim \
     tree
 
-git config --global --add safe.directory /workspace/.git
+git config --global --add safe.directory /workspace
 echo "Enter your git account name: "
 read user
 echo "Enter your git account email: "
