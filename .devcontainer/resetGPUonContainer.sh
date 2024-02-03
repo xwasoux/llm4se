@@ -7,4 +7,4 @@ curl -s -L https://nvidia.github.io/nvidia-container-runtime/experimental/$distr
 sudo apt-get -y update
 sudo apt-get install -y nvidia-docker2
 sudo systemctl restart docker
-sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+sudo docker run --rm --gpus all nvidia/cuda:12.0.0-base-ubuntu22.04 nvidia-smi
