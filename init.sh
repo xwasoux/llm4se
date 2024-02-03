@@ -1,5 +1,7 @@
 sudo apt update -y
 sudo apt -y install \
+    iputils-ping \
+    net-tools \
     tig \
     htop \
     tmux \

@@ -1,6 +1,7 @@
 # file extension
 *.txt
 *.json
+*.jsonl
 *.gz
 *.tar
 *.zip
@@ -12,6 +13,5 @@
 *.sh
 
 # Directory
-*/saved_model/
+saved_model/
 clone/
-output/
