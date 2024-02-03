@@ -22,7 +22,7 @@ The dataset we use is [BigCloneBench](https://www.cs.usask.ca/faculty/croy/paper
 
    - **idx:** index of the example
 
-2. train.txt/valid.txt/test.txt provide examples, stored in the following format:    idx1	idx2	label(0/1)   edit_distance   cosine_label
+2. ed-train.txt/ed-valid.txt/ed-test.txt provide examples, stored in the following format:    idx1	idx2	label(0/1)   edit_distance   cosine_label
 
 ### Data download & preprocess
 
@@ -56,8 +56,8 @@ cd code
 python3 run.py \
     --model_name_or_path microsoft/codebert-base \
     --index_data_file ../dataset/data.jsonl \
-    --train_data_file ../dataset/train.tsv \
-    --valid_data_file ../dataset/valid.tsv \
+    --train_data_file ../dataset/ed-train.tsv \
+    --valid_data_file ../dataset/ed-valid.tsv \
     --output_dir ./saved_model \
     --do_train \
     --train_batch_size 32 \
@@ -77,7 +77,7 @@ cd code
 python3 run.py \
     --model_name_or_path ./saved_model/microsoft-codebert-base_xxxx_yyyy-mm-dd_hh-mm-ss \
     --index_data_file ../dataset/data.jsonl \
-    --test_data_file ../dataset/test.txt \
+    --test_data_file ../dataset/ed-test.txt \
     --do_test \
     --test_max_examples_size 1000
 ```

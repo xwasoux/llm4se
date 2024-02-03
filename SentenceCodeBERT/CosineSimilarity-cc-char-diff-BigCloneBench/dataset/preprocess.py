@@ -49,17 +49,17 @@ def main() -> None:
     print("*** Train ***")
     train_df = pd.read_csv("train.txt", sep="\t", header=None, names=['idx1', 'idx2', 'label'])
     train_df = convert_edit_distance_parallel(index_data=index_data, pair_data=train_df)
-    train_df.to_csv("train.txt", sep="\t")
+    train_df.to_csv("ed-train.txt", sep="\t")
 
     print("*** Valid ***")
     valid_df = pd.read_csv("valid.txt", sep="\t", header=None, names=['idx1', 'idx2', 'label'])
     valid_df = convert_edit_distance_parallel(index_data=index_data, pair_data=valid_df)
-    valid_df.to_csv("valid.txt", sep="\t")
+    valid_df.to_csv("ed-valid.txt", sep="\t")
 
     print("*** Test ***")
     test_df = pd.read_csv("test.txt", sep="\t", header=None, names=['idx1', 'idx2', 'label'])
     test_df = convert_edit_distance_parallel(index_data=index_data, pair_data=test_df)
-    test_df.to_csv("test.txt", sep="\t")
+    test_df.to_csv("ed-test.txt", sep="\t")
 
     return None
 
