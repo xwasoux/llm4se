@@ -26,7 +26,7 @@ The dataset we use is [BigCloneBench](https://www.cs.usask.ca/faculty/croy/paper
 
 ### Data download & preprocess
 
-Data download & preprocessing way are shown below:
+Data download & example of preprocessing are shown below:
 
 ```bash
 wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/data.jsonl
@@ -34,7 +34,7 @@ wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-
 wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/test.txt
 wget https://raw.githubusercontent.com/microsoft/CodeXGLUE/main/Code-Code/Clone-detection-BigCloneBench/dataset/valid.txt
 
-python3 preprocess.py
+python3 preprocess.py --size_unified 20000
 ```
 
 ### Data Statistics

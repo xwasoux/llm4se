@@ -43,24 +43,60 @@ def convert_edit_distance_parallel(index_data: pd.DataFrame, pair_data: pd.DataF
 
     return pair_data
 
+def do_preprocess(args: argparse.Namespace, index_data: pd.DataFrame, eval: bool = False, test: bool = False) -> None:
+    input_file = args.test_data_file if test else (args.valid_data_file if eval else args.train_data_file)
+    output_file = args.output_test_data_file if test else (args.output_valid_data_file if eval else args.output_train_data_file)
+    
+    data_size = args.test_size if test else (args.valid_size if eval else args.train_size)
+    if args.size_unified:
+        data_size = args.size_unified
+    elif args.size_unspecified:
+        data_size = None
+    elif data_size:
+        pass
+    
+    df = pd.read_csv(input_file, sep="\t", header=None, names=['idx1', 'idx2', 'label'])
+    if data_size:
+        positive_df = df[df['label'] == 1].sample(n=data_size // 2, random_state=args.seed)
+        negative_df = df[df['label'] == 0].sample(n=data_size // 2, random_state=args.seed)
+        df = pd.concat([positive_df, negative_df])
+
+    df = convert_edit_distance_parallel(index_data=index_data, pair_data=df)
+    df.to_csv(output_file, sep="\t")
+
+    return None
+
 def main() -> None:
-    index_data = pd.read_json(os.path.join(".", "data.jsonl"), lines=True, orient='records', encoding='utf-8').set_index('idx')
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--func_data", type=str, default="data.jsonl", help="Path to the data file")
+    parser.add_argument("--train_data_file", type=str, default="train.txt", help="Path to the training data file")
+    parser.add_argument("--valid_data_file", type=str, default="valid.txt", help="Path to the validation data file")
+    parser.add_argument("--test_data_file", type=str, default="test.txt", help="Path to the test data file")
+    
+    parser.add_argument("--output_train_data_file", type=str, default="ed-train.txt", help="Path to the output training data file")
+    parser.add_argument("--output_valid_data_file", type=str, default="ed-valid.txt", help="Path to the output validation data file")
+    parser.add_argument("--output_test_data_file", type=str, default="ed-test.txt", help="Path to the output test data file")
+    
+    parser.add_argument("--size_unified", type=int, help="Unified size of the dataset")
+    parser.add_argument("--size_unspecified", action="store_true", help="Unified size of the dataset")
+    parser.add_argument("--train_size", type=int, default=80000, help="Size of the training dataset")
+    parser.add_argument("--valid_size", type=int, default=10000, help="Size of the validation dataset")
+    parser.add_argument("--test_size", type=int, default=10000, help="Size of the test dataset")
+    
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for shuffling")
+    args = parser.parse_args()
+    
+    index_data = pd.read_json(args.func_data, lines=True, orient='records', encoding='utf-8').set_index('idx')
 
     print("*** Train ***")
-    train_df = pd.read_csv("train.txt", sep="\t", header=None, names=['idx1', 'idx2', 'label'])
-    train_df = convert_edit_distance_parallel(index_data=index_data, pair_data=train_df)
-    train_df.to_csv("ed-train.txt", sep="\t")
+    do_preprocess(args, index_data, eval=False, test=False)
 
     print("*** Valid ***")
-    valid_df = pd.read_csv("valid.txt", sep="\t", header=None, names=['idx1', 'idx2', 'label'])
-    valid_df = convert_edit_distance_parallel(index_data=index_data, pair_data=valid_df)
-    valid_df.to_csv("ed-valid.txt", sep="\t")
+    do_preprocess(args, index_data, eval=True, test=False)
 
     print("*** Test ***")
-    test_df = pd.read_csv("test.txt", sep="\t", header=None, names=['idx1', 'idx2', 'label'])
-    test_df = convert_edit_distance_parallel(index_data=index_data, pair_data=test_df)
-    test_df.to_csv("ed-test.txt", sep="\t")
-
+    do_preprocess(args, index_data, eval=False, test=True)
+    
     return None
 
 if __name__ == "__main__":
