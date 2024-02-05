@@ -49,7 +49,7 @@ def convert_idx_to_input_example(args: argparse, index_data: pd.DataFrame, pair_
 
 def load_and_cache_examples(args: argparse, eval: bool = False, test: bool = False, max_examples_size: int = None) -> list:
     file_path = args.test_data_file if test else (args.valid_data_file if eval else args.train_data_file)
-    pair_data = pd.read_csv(file_path, sep="\t", header=None, names=["idx1", "idx2", "label"])
+    pair_data = pd.read_csv(file_path, sep="\t", header=None, names=["idx1", "idx2", "label", "edit_script", "cosine_label"])
     index_data = pd.read_json(args.index_data_file, lines=True, orient="records", encoding="utf-8").set_index("idx")
     return convert_idx_to_input_example(args, index_data, pair_data, max_examples_size)
 
@@ -193,7 +193,7 @@ def main() -> None:
         
     if args.do_test:
         ## Load test data and index data
-        pair_data = pd.read_csv(args.test_data_file, sep="\t", header=None, names=["idx1", "idx2", "label"])
+        pair_data = pd.read_csv(args.test_data_file, sep="\t", header=None, names=["idx1", "idx2", "label", "edit_script", "cosine_label"])
         index_data = pd.read_json(args.index_data_file, lines=True, orient="records", encoding="utf-8").set_index("idx")
 
         ## Extract max_examples_size examples
