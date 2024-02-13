@@ -1,0 +1,20 @@
+# file extension
+*.txt
+*.json
+*.jsonl
+*.gz
+*.tar
+*.zip
+*.pickle
+*.lock
+*.csv
+*.tsv
+*.html
+*.cas
+*.sh
+
+# Directory
+saved_model/
+clone/
+data/
+output/
