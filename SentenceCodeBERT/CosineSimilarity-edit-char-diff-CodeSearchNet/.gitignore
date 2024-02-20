@@ -15,6 +15,4 @@
 
 # Directory
 saved_model/
-clone/
-data/
-output/
+CodeSearchNet/
