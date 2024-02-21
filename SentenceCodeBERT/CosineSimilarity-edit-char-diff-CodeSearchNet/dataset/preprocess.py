@@ -37,7 +37,8 @@ def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) ->
             continue
 
         original_code_idx = f"{repo}-{func_name}"
-        edit_func.append([original_code_idx, original_code])
+        original_code_tree = str(parse_tree)
+        edit_func.append([original_code_idx, original_code, original_code_tree])
         sequence_res = APruner.sequencialBackwardPrune(tree=parse_tree)
         subtree_res = APruner.sequencialSubtreePrune(tree=parse_tree)
 
@@ -51,7 +52,8 @@ def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) ->
                                 "sequence",
                                 edit_distance, 
                                 distance_to_reciprocal(edit_distance) ])
-            edit_func.append([edit_code_idx, east_code])
+            east_code_tree = str(east[0])
+            edit_func.append([edit_code_idx, east_code, east_code_tree])
             idx += 1
 
         for east in subtree_res:
@@ -63,11 +65,12 @@ def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) ->
                                 "subtree",
                                 edit_distance, 
                                 distance_to_reciprocal(edit_distance) ])
-            edit_func.append([edit_code_idx, east_code])
+            east_code_tree = str(east[0])
+            edit_func.append([edit_code_idx, east_code, east_code_tree])
             idx += 1
 
     edit_pair_df = pd.DataFrame(edit_pair, columns=["idx1", "idx2", "pruning_type", "edit_distance", "reciprocal_label"])
-    edit_func_df = pd.DataFrame(edit_func, columns=["idx", "func"])
+    edit_func_df = pd.DataFrame(edit_func, columns=["idx", "func", "tree"])
     return edit_pair_df, edit_func_df
 
 def filtered_func_list(func_list: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
