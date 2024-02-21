@@ -58,6 +58,7 @@ python3 run.py \
     --index_data_file ../dataset/python-ed-data.jsonl \
     --train_data_file ../dataset/python-ed-train.txt \
     --valid_data_file ../dataset/python-ed-valid.txt \
+    --language python \
     --output_dir ./saved_model \
     --do_train \
     --evaluate_during_training \

@@ -75,6 +75,7 @@ def main() -> None:
     parser.add_argument("--train_data_file", type=str, default=None)
     parser.add_argument("--valid_data_file", type=str, default=None)
     parser.add_argument("--test_data_file", type=str, default=None)
+    parser.add_argument("--language", type=str, default=None)
 
     parser.add_argument("--train_max_examples_size", type=int)
     parser.add_argument("--valid_max_examples_size", type=int)
