@@ -119,11 +119,11 @@ def main() -> None:
     parser.add_argument("--output_test_data_file", type=str, default=None, help="Path to the output test data file")
 
     parser.add_argument("--size_all", action="store_true", help="Max size of the dataset")
-    parser.add_argument("--train_size", type=int, default=8000, help="Size of the training dataset")
-    parser.add_argument("--valid_size", type=int, default=1000, help="Size of the validation dataset")
-    parser.add_argument("--test_size", type=int, default=1000, help="Size of the test dataset")
+    parser.add_argument("--train_size", type=int, default=10000, help="Size of the training dataset")
+    parser.add_argument("--valid_size", type=int, default=8000, help="Size of the validation dataset")
+    parser.add_argument("--test_size", type=int, default=8000, help="Size of the test dataset")
 
-    parser.add_argument("--max_string_length", type=int, default=900, help="Limit the maximum length of the string to embedding")
+    parser.add_argument("--max_string_length", type=int, default=1000, help="Limit the maximum length of the string to embedding")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for shuffling")
     args = parser.parse_args()
 
