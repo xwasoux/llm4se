@@ -22,12 +22,12 @@ def distance_to_reciprocal(distance: int) -> float:
 
 def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) -> Tuple[pd.DataFrame, pd.DataFrame]:
     args, func_list = args_func
-    candidate_functions = [(row["repo"], row["func_name"], row["code"]) for idx, row in func_list.iterrows()]
+    candidate_functions = [(row["repo"], row["path"], row["func_name"], row["code"]) for idx, row in func_list.iterrows()]
     parser = AParser(lang=args.language)
 
     edit_pair = []
     edit_func = []
-    for repo, func_name, original_code in tqdm(candidate_functions):
+    for repo, path, func_name, original_code in tqdm(candidate_functions):
         if original_code is None or len(original_code) == 0:
             continue
         try:
@@ -36,7 +36,9 @@ def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) ->
         except:
             continue
 
-        original_code_idx = f"{repo}-{func_name}"
+        repo = repo.replace("/", "-")
+        path = path.replace("/", "-")
+        original_code_idx = "{}={}={}".format(repo, path, func_name)
         original_code_tree = str(parse_tree)
         edit_func.append([original_code_idx, original_code, original_code_tree])
         sequence_res = APruner.sequencialBackwardPrune(tree=parse_tree)
@@ -45,7 +47,7 @@ def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) ->
         idx = 1
         for east in sequence_res:
             east_code = east[0].recover()
-            edit_code_idx = f"{repo}-{func_name}-{idx:04d}"
+            edit_code_idx = f"{repo}={path}={func_name}={idx:04d}"
             edit_distance = Levenshtein.distance(original_code, east_code)
             edit_pair.append([original_code_idx, 
                                 edit_code_idx, 
@@ -58,7 +60,7 @@ def create_edit_code_pair(args_func: Tuple[argparse.Namespace, pd.DataFrame]) ->
 
         for east in subtree_res:
             east_code = east[0].recover()
-            edit_code_idx = f"{repo}-{func_name}-{idx:04d}"
+            edit_code_idx = f"{repo}={path}={func_name}={idx:04d}"
             edit_distance = Levenshtein.distance(original_code, east_code)
             edit_pair.append([original_code_idx, 
                                 edit_code_idx, 
