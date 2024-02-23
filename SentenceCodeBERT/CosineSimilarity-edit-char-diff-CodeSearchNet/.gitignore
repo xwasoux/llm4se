@@ -12,7 +12,10 @@
 *.html
 *.cas
 *.sh
+*.png
+*.jpg
 
 # Directory
 saved_model/
 CodeSearchNet/
+output/
