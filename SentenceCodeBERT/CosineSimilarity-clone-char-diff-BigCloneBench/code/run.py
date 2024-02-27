@@ -211,7 +211,7 @@ def main() -> None:
         logger.info("   Model save path: {}".format(model_save_path))
 
         ## Encode and calculate cosine simillarity
-        encode_result = []
+        predict_results = []
         for _, row in tqdm(pair_data.iterrows(), total=len(pair_data)):
             idx1 = row["idx1"]
             idx2 = row["idx2"]
@@ -227,9 +227,9 @@ def main() -> None:
             text2_embedding = model.encode(text2, convert_to_tensor=True)
             cosine_score = util.cos_sim(text1_embedding, text2_embedding).cpu().numpy().item()
 
-            encode_result.append([text1, text2, label, edit_distance, cosine_label, cosine_score])
-        result = pd.DataFrame(encode_result, columns=["text1", "text2", "label", "edit_distance", "cosine_label", "cosine_score"])
-        filename = os.path.join(model_save_path, "{}.tsv".format(partition + "-res_" + datetime_now))
+            predict_results.append([text1, text2, label, edit_distance, cosine_label, cosine_score])
+        result = pd.DataFrame(predict_results, columns=["text1", "text2", "label", "edit_distance", "cosine_label", "cosine_score"])
+        filename = os.path.join(model_save_path, "{}.tsv".format(partition + "-predict_" + datetime_now))
         result.to_csv(filename, sep="\t")
         
 

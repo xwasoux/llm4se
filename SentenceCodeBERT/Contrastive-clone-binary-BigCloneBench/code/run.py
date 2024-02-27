@@ -198,7 +198,7 @@ def main() -> None:
         logger.info("   Batch size = {}".format(args.train_batch_size))
         logger.info("   Model save path: {}".format(model_save_path))
 
-        encode_result = []
+        predict_results = []
         for input_example in tqdm(test_dataset):
             text1 = input_example.texts[0]
             text2 = input_example.texts[1]
@@ -207,9 +207,9 @@ def main() -> None:
             text1_embedding = model.encode(text1, convert_to_tensor=True)
             text2_embedding = model.encode(text2, convert_to_tensor=True)
             cosine_score = util.cos_sim(text1_embedding, text2_embedding).cpu().numpy().item()
-            encode_result.append([text1, text2, label, cosine_score])
-        result = pd.DataFrame(encode_result, columns=['text1', 'text2', 'label', 'cosine_score'])
-        filename = os.path.join(model_save_path, '{}.tsv'.format(partition + "-res_" + datetime_now))
+            predict_results.append([text1, text2, label, cosine_score])
+        result = pd.DataFrame(predict_results, columns=['text1', 'text2', 'label', 'cosine_score'])
+        filename = os.path.join(model_save_path, '{}.tsv'.format(partition + "-predict_" + datetime_now))
         result.to_csv(filename, sep='\t', index=False)
 
 

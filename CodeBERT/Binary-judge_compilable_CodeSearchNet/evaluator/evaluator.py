@@ -42,14 +42,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
 
     ## Required parameters
-    parser.add_argument('--test_prediction_file', type=str, required=True)
+    parser.add_argument('--test_predict_file', type=str, required=True)
 
     args = parser.parse_args()
 
     ## Validation each file exists
-    args.model_name_or_path = os.path.dirname(args.test_prediction_file)
+    args.model_name_or_path = os.path.dirname(args.test_predict_file)
     assert os.path.exists(args.model_name_or_path)
-    assert os.path.exists(args.test_prediction_file)
+    assert os.path.exists(args.test_predict_file)
 
 
     ## Create logger
@@ -59,10 +59,10 @@ def main() -> None:
     logger = logging.getLogger(__name__)
 
     ## Create test prediction dataframe
-    test_res_df = pd.read_csv(args.test_prediction_file, sep='\t')
+    test_res_df = pd.read_csv(args.test_predict_file, sep='\t')
 
     ## File path and name
-    match_res = re.findall(r'(\.\.[a-zA-Z0-9\/\-\_]*)', args.test_prediction_file)
+    match_res = re.findall(r'(\.\.[a-zA-Z0-9\/\-\_]*)', args.test_predict_file)
     basename = match_res[0]
     
     prediction = evaluate(test_res_df)

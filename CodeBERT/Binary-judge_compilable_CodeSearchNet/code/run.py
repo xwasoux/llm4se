@@ -278,7 +278,7 @@ def main() -> None:
 
             prediction_table.append([idx, text, pruning_type, compilable_label, prediction])
         prediction_df = pd.DataFrame(prediction_table, columns=["idx", "text", "pruning_type", "compilable_label", "prediction"])
-        filename = os.path.join(model_save_path, "{}.txt".format(partition + "-res_" + datetime_now))
+        filename = os.path.join(model_save_path, "{}.txt".format(partition + "-predict_" + datetime_now))
         prediction_df.to_csv(filename, sep="\t", index=False)
         
 

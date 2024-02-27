@@ -87,5 +87,5 @@ An example of evaluating is shown below:
 cd pearson
 python3 evaluator.py \
     --model_name_or_path ../code/saved_model/microsoft-codebert-base_xxxx_yyyy-mm-dd_hh-mm-ss \
-    --test_result_file ../code/saved_model/microsoft-codebert-base_xxxx_yyyy-mm-dd_hh-mm-ss/test-res_xxxx_yyyy-mm-dd_hh-mm-ss.tsv
+    --test_result_file ../code/saved_model/microsoft-codebert-base_xxxx_yyyy-mm-dd_hh-mm-ss/test-predict_xxxx_yyyy-mm-dd_hh-mm-ss.tsv
 ```
