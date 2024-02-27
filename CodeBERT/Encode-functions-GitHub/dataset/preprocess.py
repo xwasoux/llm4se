@@ -56,7 +56,7 @@ def main():
     clone_dir, deploy_dir = dir_manage(user_name, repo_name)
 
     ## Start clone
-    # repo = Repo.clone_from(args.girhub_repo, clone_dir, branch=args.branch)
+    repo = Repo.clone_from(args.girhub_repo, clone_dir, branch=args.branch)
     
     ## Retreve target files
     target_file_paths = retreve_target_files(args, clone_dir)
