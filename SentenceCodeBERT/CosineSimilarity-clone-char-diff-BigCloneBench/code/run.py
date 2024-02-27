@@ -4,6 +4,7 @@ import csv
 import glob
 import gzip
 import math
+import pytz
 import pickle
 import random
 import logging
@@ -104,7 +105,7 @@ def main() -> None:
         model_save_path = os.path.join(args.output_dir, 
                                         args.model_name_or_path.replace("/", "-") + "_" + \
                                         pooler_name + "_" + \
-                                        datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+                                        datetime.now(pytz.timezone("Asia/Tokyo")).strftime("%Y-%m-%d_%H-%M-%S"))
         if not os.path.exists(model_save_path):
             os.makedirs(model_save_path)
 
