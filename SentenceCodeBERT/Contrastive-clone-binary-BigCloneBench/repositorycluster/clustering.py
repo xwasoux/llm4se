@@ -65,7 +65,7 @@ def clone_from_github(args: argparse.Namespace) -> git.repo.base.Repo:
     else:
         return Repo(clone_path)
 
-def retreve_target_files(args: argparse, working_dir: str) -> list:
+def retreve_target_files(args: argparse.Namespace, working_dir: str) -> list:
     return glob.glob(os.path.join(working_dir, "**", f"*.{args.language}"), recursive=True)
 
 def remove_abs_path(file_path: str, user_and_repo_name:str) -> str:
@@ -174,7 +174,7 @@ def pca(embeddings: list, idx: list, dim: int = 2) -> list:
     reducer = PCA(n_components=dim)
     return reducer.fit_transform(df)
 
-def hierarchal_clustering(args: argparse, embeddings: list, img_file_name: str = "hierarchal_dendrogram.png",
+def hierarchal_clustering(args: argparse.Namespace, embeddings: list, img_file_name: str = "hierarchal_dendrogram.png",
                                     plot_html: bool = True, width: int = 800, height: int = 500) -> None:
     logger.info("***** Start hierarchal clustering *****")
     hierarchal = ff.create_dendrogram(embeddings)
@@ -196,7 +196,7 @@ def _create_cluster_labels(cluster_num_labels: list) -> list:
         cluster_labels.append(label)
     return cluster_labels
 
-def hdbscan_clustering(args: argparse, embeddings: list, idx: list, sentences: list, dataset: MyDataset, 
+def hdbscan_clustering(args: argparse.Namespace, embeddings: list, idx: list, sentences: list, dataset: MyDataset, 
                         img_file_name: str = "hdbscan_scatter.png", plot_html: bool = True, width: int = 800, height: int = 500) -> None:
     logger.info("***** Start hdbscan clustering *****")
     hdbscan = HDBSCAN()

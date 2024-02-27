@@ -36,7 +36,7 @@ import plotly.figure_factory as ff
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-def extract_code_idx(args: argparse, index_data: pd.DataFrame, test_data_df: pd.DataFrame, retrieve_size: int = 10) -> list:
+def extract_code_idx(args: argparse.Namespace, index_data: pd.DataFrame, test_data_df: pd.DataFrame, retrieve_size: int = 10) -> list:
     unique_code_idxs = test_data_df['idx1'].unique()
     tokenizer = AutoTokenizer.from_pretrained("microsoft/codebert-base")
 
@@ -53,7 +53,7 @@ def extract_code_idx(args: argparse, index_data: pd.DataFrame, test_data_df: pd.
     candidate_code_idxs = [idx for idx, code in sorted_less_than_512_code[:retrieve_size]]
     return candidate_code_idxs
 
-def encode_and_calculate_cosine_similarity(args: argparse, index_data: pd.DataFrame, test_data_df: pd.DataFrame) -> pd.DataFrame:
+def encode_and_calculate_cosine_similarity(args: argparse.Namespace, index_data: pd.DataFrame, test_data_df: pd.DataFrame) -> pd.DataFrame:
     model_paths = [args.mean_pooling_model_path, args.max_pooling_model_path, args.cls_pooling_model_path]
     model_labels = ["mean", "max", "cls"]
 
@@ -114,7 +114,7 @@ def plot_each_line_diagram(df: pd.DataFrame, pruning_type: str, pooler: str, sav
     fig.write_image(os.path.join(save_dir, f"line-plot_{pruning_type}-{pooler}.png"))
     return None
 
-def judge_compilable_code(args: argparse, df: pd.DataFrame):
+def judge_compilable_code(args: argparse.Namespace, df: pd.DataFrame):
     if args.language == "python":
         import ast
     

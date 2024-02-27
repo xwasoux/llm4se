@@ -34,7 +34,7 @@ def dir_manage(user_name: str, repo_name: str) -> str:
     os.makedirs(deploy_dir, exist_ok=True)
     return clone_dir, deploy_dir
     
-def retreve_target_files(args: argparse, clone_dir: str) -> list:
+def retreve_target_files(args: argparse.Namespace, clone_dir: str) -> list:
     return glob(os.path.join(clone_dir, "**", f"*.{args.language}"), recursive=True)
 
 def remove_abs_path(file_path: str, user_repo_name:str) -> str:

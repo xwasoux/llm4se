@@ -18,7 +18,7 @@ from multiprocessing import Pool
 from typing import List, Dict, Any, Tuple
 from astars import AParser, APruner
 
-def judge_compilable_code(args: argparse, code: str) -> int:
+def judge_compilable_code(args: argparse.Namespace, code: str) -> int:
     try:
         if args.language == "python":
             ast.parse(code)

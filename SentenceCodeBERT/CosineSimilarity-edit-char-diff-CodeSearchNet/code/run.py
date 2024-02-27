@@ -28,7 +28,7 @@ from sentence_transformers import SentenceTransformer, LoggingHandler, losses, u
 from sentence_transformers import models, losses, evaluation
 
 
-def convert_idx_to_input_example(args: argparse, index_data: pd.DataFrame, pair_data: pd.DataFrame, max_examples_size: int = None) -> list:
+def convert_idx_to_input_example(args: argparse.Namespace, index_data: pd.DataFrame, pair_data: pd.DataFrame, max_examples_size: int = None) -> list:
     input_examples = []
     if max_examples_size is not None:
         sequence_pair = pair_data[pair_data["pruning_type"] == "sequence"]
@@ -46,7 +46,7 @@ def convert_idx_to_input_example(args: argparse, index_data: pd.DataFrame, pair_
         input_examples.append(InputExample(texts=[text1, text2], label=reciprocal_label))
     return input_examples
 
-def load_and_cache_examples(args: argparse, eval: bool = False, test: bool = False, max_examples_size: int = None) -> list:
+def load_and_cache_examples(args: argparse.Namespace, eval: bool = False, test: bool = False, max_examples_size: int = None) -> list:
     file_path = args.test_data_file if test else (args.valid_data_file if eval else args.train_data_file)
     pair_data = pd.read_csv(file_path, sep="\t")
     index_data = pd.read_json(args.index_data_file, lines=True, orient="records", encoding="utf-8").set_index("idx")
