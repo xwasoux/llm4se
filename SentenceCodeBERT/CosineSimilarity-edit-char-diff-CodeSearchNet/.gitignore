@@ -1,0 +1,21 @@
+# file extension
+*.txt
+*.json
+*.jsonl
+*.gz
+*.tar
+*.zip
+*.pickle
+*.lock
+*.csv
+*.tsv
+*.html
+*.cas
+*.sh
+*.png
+*.jpg
+
+# Directory
+saved_model/
+CodeSearchNet/
+output/
