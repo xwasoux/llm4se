@@ -52,6 +52,7 @@ mypy = "^1.7.1"
 gitpython = "^3.1.40"
 cupy-cuda12x = "^13.0.0"
 dask = "^2024.1.1"
+code-tokenize = "^0.2.0"
 
 
 [build-system]
