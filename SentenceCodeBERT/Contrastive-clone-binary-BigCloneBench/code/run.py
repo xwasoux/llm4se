@@ -1,3 +1,4 @@
+import re
 import os
 import sys
 import csv
@@ -29,8 +30,8 @@ from sentence_transformers import models, losses, evaluation
 def convert_idx_to_input_example(args: argparse.Namespace, index_data: pd.DataFrame, pair_data: pd.DataFrame, max_examples_size: int = None) -> list:
     input_examples = []
     if max_examples_size is not None:
-        positive_pair = pair_data[pair_data['label'] == 1]
-        negative_pair = pair_data[pair_data['label'] == 0]
+        positive_pair = pair_data[pair_data['clone'] == 1]
+        negative_pair = pair_data[pair_data['clone'] == 0]
         positive_pair = positive_pair.sample(n=max_examples_size//2, random_state=42)
         negative_pair = negative_pair.sample(n=max_examples_size//2, random_state=42)
         pair_data = pd.concat([positive_pair, negative_pair], ignore_index=True)
@@ -40,13 +41,13 @@ def convert_idx_to_input_example(args: argparse.Namespace, index_data: pd.DataFr
         idx2 = row['idx2']
         text1 = index_data.loc[idx1]['func']
         text2 = index_data.loc[idx2]['func']
-        label = row["label"]
-        input_examples.append(InputExample(texts=[text1, text2], label=label))
+        clone_label = row["clone"]
+        input_examples.append(InputExample(texts=[text1, text2], label=clone_label))
     return input_examples
 
 def load_and_cache_examples(args: argparse.Namespace, eval: bool = False, test: bool = False, max_examples_size: int = None) -> list:
     file_path = args.test_data_file if test else (args.valid_data_file if eval else args.train_data_file)
-    pair_data = pd.read_csv(file_path, sep='\t', header=None, names=['idx1', 'idx2', 'label'])
+    pair_data = pd.read_csv(file_path, sep='\t', header=None, names=['idx1', 'idx2', 'clone'])
     index_data = pd.read_json(args.index_data_file, lines=True, orient='records', encoding='utf-8')
     index_data = index_data.set_index('idx')
     return convert_idx_to_input_example(args, index_data, pair_data, max_examples_size)
@@ -125,7 +126,7 @@ def main() -> None:
     ## Create logger
     partition = "test" if args.do_test else ("valid" if args.do_eval else "train")
     datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_filename = partition + '_log_' + datetime_now
+    log_filename = partition + "_logger_" + datetime_now
     logging.basicConfig(format='%(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO,
@@ -190,28 +191,44 @@ def main() -> None:
                         show_progress_bar=True)
 
     if args.do_test:
-        ## Create data loader and evaluator for BinaryClassificationEvaluator
-        test_dataset = load_and_cache_examples(args, eval=False, test=True, max_examples_size=args.test_max_examples_size)
+        ## Load test data and index data
+        pair_data = pd.read_csv(args.test_data_file, sep="\t", header=None, names=["idx1", "idx2", "clone"])
+        index_data = pd.read_json(args.index_data_file, lines=True, orient="records", encoding="utf-8").set_index("idx")
+
+        ## Extract max_examples_size examples
+        max_examples_size = args.test_max_examples_size
+        if max_examples_size is not None:
+            positive_pair = pair_data[pair_data["clone"] == 1]
+            negative_pair = pair_data[pair_data["clone"] == 0]
+            positive_pair = positive_pair.sample(n=max_examples_size//2, random_state=42)
+            negative_pair = negative_pair.sample(n=max_examples_size//2, random_state=42)
+            pair_data = pd.concat([positive_pair, negative_pair], ignore_index=True)
 
         ## Evaluate the model
         logger.info("********** Running test **********")
-        logger.info("   Num examples = {}".format(len(test_dataset)))
-        logger.info("   Batch size = {}".format(args.train_batch_size))
+        logger.info("   Num examples = {}".format(len(pair_data)))
+        logger.info("       Positive examples = {}".format(len(pair_data[pair_data["clone"] == 1])))
+        logger.info("       Negative examples = {}".format(len(pair_data[pair_data["clone"] == 0])))
         logger.info("   Model save path: {}".format(model_save_path))
 
+        ## Encode and calculate cosine simillarity
         predict_results = []
-        for input_example in tqdm(test_dataset):
-            text1 = input_example.texts[0]
-            text2 = input_example.texts[1]
-            label = input_example.label
+        for _, row in tqdm(pair_data.iterrows(), total=len(pair_data)):
+            idx1 = row["idx1"]
+            idx2 = row["idx2"]
+            text1 = index_data.loc[idx1]["func"]
+            text2 = index_data.loc[idx2]["func"]
+            clone_label = row["clone"]
+
             ## Embedding & calculate cosine simillarity
             text1_embedding = model.encode(text1, convert_to_tensor=True)
             text2_embedding = model.encode(text2, convert_to_tensor=True)
             cosine_score = util.cos_sim(text1_embedding, text2_embedding).cpu().numpy().item()
-            predict_results.append([text1, text2, label, cosine_score])
-        result = pd.DataFrame(predict_results, columns=['text1', 'text2', 'label', 'cosine_score'])
-        filename = os.path.join(model_save_path, '{}.tsv'.format(partition + "-predict_" + datetime_now))
-        result.to_csv(filename, sep='\t', index=False)
+
+            predict_results.append([idx1, idx2, text1, text2, clone_label, cosine_score])
+        result = pd.DataFrame(predict_results, columns=["idx1", "idx2", "text1", "text2", "clone", "cosine_score"])
+        filename = os.path.join(model_save_path, "{}.txt".format(partition + "-predict_" + datetime_now))
+        result.to_csv(filename, sep="\t", index=False)
 
 
 if __name__ == '__main__':
