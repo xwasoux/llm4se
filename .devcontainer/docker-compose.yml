@@ -54,6 +54,9 @@ services:
               
             # - driver: nvidia 
             #   capabilities: [ gpu ]
+    
+    # Uncomment the next line to use the host's network stack.
+    shm_size: 12gb
 
       # Uncomment the next line to use a non-root user for all processes.
     user: vscode
