@@ -128,7 +128,7 @@ def main() -> None:
     ## Create logger
     partition = "test" if args.do_test else ("valid" if args.do_eval else "train")
     datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_filename = partition + "_log_" + datetime_now
+    log_filename = partition + "_logger_" + datetime_now
     logging.basicConfig(format="%(asctime)s - %(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S",
                         level=logging.INFO, 
